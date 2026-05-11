@@ -1,0 +1,38 @@
+{
+  "name": "checkturnitinviet",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.13.0",
+    "@nuxt/eslint": "^1.15.2",
+    "@nuxt/icon": "^2.2.2",
+    "@nuxt/image": "^2.0.0",
+    "@nuxt/scripts": "^1.0.6",
+    "@nuxt/ui": "^4.7.1",
+    "@nuxtjs/supabase": "^2.0.6",
+    "@unhead/vue": "^2.1.15",
+    "@vueuse/nuxt": "^14.3.0",
+    "better-sqlite3": "^12.9.0",
+    "eslint": "^10.3.0",
+    "nuxt": "^4.4.4",
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.3",
+    "vnpay": "^2.5.0",
+    "vue": "^3.5.33",
+    "vue-router": "^5.0.6",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.106",
+    "@iconify-json/simple-icons": "^1.2.81",
+    "@types/node": "^25.8.0",
+    "supabase": "^2.98.2"
+  }
+}

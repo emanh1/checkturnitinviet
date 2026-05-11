@@ -1,0 +1,121 @@
+title: CheckTurnitinViet - [Kiểm tra trước khi nộp bài]{class="text-primary"}
+description: Nhận báo cáo [AI + đạo văn]{class="text-primary"} bằng cách nộp file. Hãy [chắc chắn 100%]{class="text-primary"} trước khi nộp lên trường của bạn.
+seo:
+  title: CheckTurnitinViet
+  description: Nhận báo cáo AI + đạo văn bằng cách nộp file. Hãy chắc chắn 100% trước khi nộp lên trường của bạn.
+navigation: false
+hero:
+  links:
+    - label: Tạo tài khoản
+      icon: i-lucide-arrow-right
+      trailing: true
+      to: /signup
+      size: xl
+    - label: Đăng nhập
+      size: xl
+      color: neutral
+      variant: subtle
+      to: /login
+process:
+  title: Quy trình check
+  description: Chỉ với vài bước đơn giản để nhận báo cáo chi tiết
+  steps:
+    - title: Chọn loại check và tải file
+      description: Chọn check AI, đạo văn hoặc combo, sau đó up file tài liệu của bạn lên.
+      icon: i-lucide-upload
+    - title: Xử lý
+      description: Chúng tôi sẽ phân tích file một cách nhanh chóng và chính xác.
+      icon: i-lucide-cog
+    - title: Báo cáo sẵn sàng
+      description: Nhận báo cáo chi tiết về mức độ AI và đạo văn trong file của bạn.
+      icon: i-lucide-check-circle
+report_preview:
+  title: Demo báo cáo
+  description: Báo cáo mẫu cho thấy kết quả kiểm tra AI và đạo văn
+  ai_score: 85
+  similarity_score: 12
+  footnote: Đây là bản demo, báo cáo thực tế có thể khác.
+  file_data:
+    file_name: Research_Paper_Final.pdf
+    file_size: 2500000
+    pages: 14
+    word_count: 4250
+comparison:
+  title: Tại sao chọn chúng tôi?
+  features:
+    - title: 100% Bảo mật file
+      description: File của bạn được mã hóa và xóa sau khi xử lý
+      icon: i-lucide-shield-check
+    - title: Báo cáo phát hiện AI
+      description: Phân tích chi tiết mức độ nội dung được tạo bởi AI
+      icon: i-lucide-brain
+    - title: Báo cáo đạo văn
+      description: Kiểm tra mức độ trùng lặp với nguồn online
+      icon: i-lucide-file-text
+    - title: Giao hàng tức thì
+      description: Nhận báo cáo trong vòng vài phút
+      icon: i-lucide-zap
+    - title: Giá cả phải chăng
+      description: Phù hợp với mọi ngân sách sinh viên
+      icon: i-lucide-dollar-sign
+    - title: 100% Báo cáo chính xác
+      description: Công nghệ tiên tiến đảm bảo độ chính xác cao
+      icon: i-lucide-target
+testimonials:
+  headline: Reviews
+  title: Người dùng nói gì
+  description: Đánh giá thật từ người dùng đã xác minh
+  items:
+    - quote: Báo cáo dễ đọc, phần highlight rõ ràng. Mình kiểm tra bài trước khi nộp thấy yên tâm hơn nhiều.
+      user:
+        name: Linh T.
+        description: Sinh viên
+        avatar:
+          src: https://i.pravatar.cc/120?img=1
+    - quote: Phát hiện phần AI rất tiện cho team content. Giao diện báo cáo cũng dễ giải thích cho khách.
+      user:
+        name: Quang Nguyễn
+        description: Content Lead
+        avatar:
+          src: https://i.pravatar.cc/120?img=7
+    - quote: Upload xong chờ vài phút là có kết quả. Giá tốt và dùng khá tiện.
+      user:
+        name: Mai H.
+        description: Freelancer
+        avatar:
+          src: https://i.pravatar.cc/120?img=3
+    - quote: Mình dùng để kiểm tra nội dung AI trước khi đăng blog cho khách. Kết quả ổn định và thao tác rất đơn giản.
+      user:
+        name: Thanh Vy
+        description: Copywriter
+        avatar:
+          src: https://i.pravatar.cc/120?img=20
+faq:
+  title: Câu hỏi thường gặp
+  description: Dưới đây là một số câu hỏi thường gặp từ người dùng của chúng tôi.
+  items:
+    - label: Dịch vụ này có an toàn không?
+      content: Chúng tôi sử dụng mã hóa SSL và tuân thủ các tiêu chuẩn bảo mật cao nhất để bảo vệ dữ liệu của bạn.
+      # icon: i-lucide-lock
+    - label: Làm thế nào để hủy đăng ký?
+      content: Bạn có thể hủy đăng ký bất cứ lúc nào từ trang tài khoản của mình.
+    - label: Bản dùng thử miễn phí hoạt động như thế nào?
+      content: Bạn có thể dùng thử miễn phí trong 7 ngày mà không cần thẻ credits.
+    - label: Tôi có thể chuyển kế hoạch sau không?
+      content: Có, bạn có thể nâng cấp hoặc hạ cấp kế hoạch bất cứ lúc nào.
+    - label: Bạn có cung cấp hoàn tiền không?
+      content: Chúng tôi cung cấp chính sách hoàn tiền trong vòng 30 ngày.
+    - label: Bạn có cung cấp hỗ trợ không?
+      content: Có, chúng tôi cung cấp hỗ trợ qua email và chat trực tiếp.
+cta:
+  title: Bạn đã sẵn sàng kiểm tra file chưa?
+  description: Tạo tài khoản miễn phí, chọn gói, tải tài liệu lên và nhận báo cáo AI + đạo văn - tất cả chỉ trong chưa đầy một phút.
+  links:
+    - label: Tạo tài khoản miễn phí
+      to: '/signup'
+      trailingIcon: i-lucide-arrow-right
+      icon: i-lucide-stars
+    - label: Đăng nhập
+      to: '/login'
+      variant: subtle
+      # icon: i-simple-icons-github

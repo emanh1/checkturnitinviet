@@ -1,6 +1,6 @@
 export const useFileUpload = () => {
   const supabase = useSupabaseClient()
-  const { profile, fetchProfile } = useUser()
+  const { fetch, profile } = useUser()
   const { fetchSettings } = useSettings()
 
   const uploadFile = async (file: File, checkType: 'ai' | 'similarity' | 'combo' = 'combo') => {
@@ -25,19 +25,19 @@ export const useFileUpload = () => {
 
     let creditsRequired = 0
 
-      switch (checkType) {
-        case 'ai':
-          creditsRequired = settings.ai_credit_cost
-          break
+    switch (checkType) {
+      case 'ai':
+        creditsRequired = settings.ai_credit_cost
+        break
 
-        case 'similarity':
-          creditsRequired = settings.similarity_credit_cost
-          break
+      case 'similarity':
+        creditsRequired = settings.similarity_credit_cost
+        break
 
-        case 'combo':
-          creditsRequired = settings.combo_credit_cost
-          break
-      }
+      case 'combo':
+        creditsRequired = settings.combo_credit_cost
+        break
+    }
 
     const currentCredits = profile.value.credits ?? 0
 
@@ -125,7 +125,7 @@ export const useFileUpload = () => {
       throw error
     }
 
-    await fetchProfile()
+    await fetch()
     return orderData
   }
 

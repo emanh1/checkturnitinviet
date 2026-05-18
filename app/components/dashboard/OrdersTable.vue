@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { formatBytes, formatDateTime, getFilePages } from '~/utils/formatters'
+import { formatBytes, formatDateTime } from '~/utils/formatters'
 import type { Order } from '~/types'
 
 const props = defineProps<{
-  orders: Order[]
+  orders: readonly Order[]
   userRole: 'customer' | 'employee' | 'admin'
-  profileId: string | undefined
+  profileId: string
 }>()
 
 const emit = defineEmits<{
@@ -22,7 +22,6 @@ const emit = defineEmits<{
         <tr>
           <th class="px-4 py-3">File name</th>
           <th class="px-4 py-3">File size</th>
-          <th class="px-4 py-3">Pages</th>
           <th v-if="userRole !== 'customer'" class="px-4 py-3">Customer</th>
           <th v-if="userRole === 'customer'" class="px-4 py-3">AI</th>
           <th v-if="userRole === 'customer'" class="px-4 py-3">Similarity</th>
@@ -35,7 +34,6 @@ const emit = defineEmits<{
         <tr v-for="order in orders" :key="order.id">
           <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">{{ order.documents.file_name }}</td>
           <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">{{ formatBytes(order.documents.file_size) }}</td>
-          <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">{{ getFilePages(order) }}</td>
           
           <td v-if="userRole !== 'customer'" class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
             {{ order.profiles?.name || 'Unknown' }}

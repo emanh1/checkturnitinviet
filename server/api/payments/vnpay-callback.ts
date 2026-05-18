@@ -1,8 +1,9 @@
+import { serverSupabaseServiceRole } from '#supabase/server'
 import crypto from 'crypto'
 
 export default eventHandler(async (event) => {
   const config = useRuntimeConfig()
-  const supabase = useSupabaseClient()
+  const supabase = serverSupabaseServiceRole(event)
   const hashSecret = config.vnpayHashSecret
 
   if (!hashSecret) {
@@ -16,18 +17,27 @@ export default eventHandler(async (event) => {
 
   // Create signature from all params except vnp_SecureHash and vnp_SecureHashType
   const sortedParams = Object.keys(query)
-    .filter(key => key.startsWith('vnp_') && key !== 'vnp_SecureHash' && key !== 'vnp_SecureHashType')
+    .filter(
+      key =>
+        key.startsWith('vnp_') &&
+        key !== 'vnp_SecureHash' &&
+        key !== 'vnp_SecureHashType'
+    )
     .sort()
-    .reduce((result, key) => {
-      result[key] = String(query[key])
-      return result
-    }, {} as Record<string, string>)
+    .reduce<Record<string, string>>((result, key) => {
+      const value = query[key]
 
-  const signData = Object.keys(sortedParams)
-    .map(key => `${key}=${encodeURIComponent(sortedParams[key])}`)
+      if (value !== undefined && value !== null) {
+        result[key] = String(value)
+      }
+
+      return result
+    }, {})
+
+  const signData = Object.entries(sortedParams)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
     .join('&')
 
-  // Verify signature
   const hmac = crypto.createHmac('sha512', hashSecret)
   const calculatedHash = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex')
 
@@ -36,6 +46,7 @@ export default eventHandler(async (event) => {
     return { code: '97', message: 'Invalid signature' }
   }
 
+  // TODO: nahhh dont do this in productionnnn
   const responseCode = query.vnp_ResponseCode as string
   const transactionId = query.vnp_TxnRef as string
   const amount = parseInt(query.vnp_Amount as string)
@@ -52,6 +63,13 @@ export default eventHandler(async (event) => {
   if (paymentError || !payment) {
     console.error('Payment not found:', transactionId)
     return { code: '01', message: 'Order not found' }
+  }
+
+  if (!payment.credits_added) return {
+    // TODO: throw proper err
+  }
+  if (!payment.user_id) return {
+    // TODO: throw proper err
   }
 
   // Check if payment was already processed (idempotency)
@@ -81,7 +99,9 @@ export default eventHandler(async (event) => {
         })
         .eq('id', payment.id)
 
-      if (updatePaymentError) throw updatePaymentError
+      if (updatePaymentError) return {
+
+      } // TODO: throw proper err
 
       // Add credits to user profile
       const { data: profile } = await supabase
@@ -91,6 +111,7 @@ export default eventHandler(async (event) => {
         .single()
 
       const currentCredits = profile?.credits ?? 0
+
       const newCredits = currentCredits + payment.credits_added
 
       const { error: updateCreditsError } = await supabase

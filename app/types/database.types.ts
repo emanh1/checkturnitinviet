@@ -135,36 +135,48 @@ export type Database = {
       payments: {
         Row: {
           amount: number | null
+          bank_code: string | null
           created_at: string | null
           credits_added: number | null
           currency: string | null
           id: string
           method: string | null
+          paid_at: string | null
           status: string | null
           transaction_id: string | null
+          transaction_no: string | null
           user_id: string | null
+          vnp_response_code: string | null
         }
         Insert: {
           amount?: number | null
+          bank_code?: string | null
           created_at?: string | null
           credits_added?: number | null
           currency?: string | null
           id?: string
           method?: string | null
+          paid_at?: string | null
           status?: string | null
           transaction_id?: string | null
+          transaction_no?: string | null
           user_id?: string | null
+          vnp_response_code?: string | null
         }
         Update: {
           amount?: number | null
+          bank_code?: string | null
           created_at?: string | null
           credits_added?: number | null
           currency?: string | null
           id?: string
           method?: string | null
+          paid_at?: string | null
           status?: string | null
           transaction_id?: string | null
+          transaction_no?: string | null
           user_id?: string | null
+          vnp_response_code?: string | null
         }
         Relationships: [
           {

@@ -17,12 +17,6 @@ onMounted(() => {
   fetchSettings()
 })
 
-watchEffect(() => {
-  if (!loading.value && profile.value && !isCustomer.value) {
-    router.push('/dashboard/work')
-  }
-})
-
 const buyCredits = async (creditPackage: number) => {
   await initiatePayment(creditPackage)
 }
@@ -114,9 +108,6 @@ const buyCredits = async (creditPackage: number) => {
         </div>
       </UCard>
 
-      <div class="text-center">
-        <UButton variant="outline" to="/dashboard">Quay lại Dashboard</UButton>
-      </div>
     </div>
   </UDashboardPanel>
 </template>

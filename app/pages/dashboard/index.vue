@@ -12,12 +12,6 @@ const { profile, isCustomer, loading } = useUser()
 const { orders, fetchOrders } = useOrders()
 const router = useRouter()
 
-watchEffect(() => {
-  if (!loading.value && profile.value && !isCustomer.value) {
-    router.push('/dashboard/work')
-  }
-})
-
 const supportContacts = [
   { name: 'Phong', region: 'Vietnam', method: 'Zalo', href: 'https://zalo.me' },
   { name: 'Ayaan', region: 'Bangladesh', method: 'WA', href: 'https://wa.me' },
@@ -34,7 +28,7 @@ watch(isCustomer, async (customer) => {
 </script>
 
 <template>
-  <UDashboardPanel id="dashboard" :ui="{ body: 'lg:py-8' }">
+  <UDashboardPanel id="dashboard" :ui="{ body: 'lg:py-8' }" v-if="profile">
 
     <div class="space-y-6">
       <UCard>
@@ -60,21 +54,12 @@ watch(isCustomer, async (customer) => {
       </UCard>
 
       <UCard>
-        <div class="grid gap-6 lg:grid-cols-[1.5fr_1fr] items-center">
-          <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-primary">credits</p>
-            <h2 class="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">Thông tin credits của bạn</h2>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">1 credits = 15.000 VND. Kiểm tra AI hoặc đạo văn dùng 1 credits, combo dùng 2 credits.</p>
-          </div>
-          <div class="rounded-4xl border border-slate-200 bg-slate-50 p-6 shadow-sm dark:border-neutral-800 dark:bg-slate-900">
             <p class="text-sm text-slate-500 dark:text-slate-400">credits hiện có</p>
             <p class="mt-2 text-4xl font-semibold text-slate-900 dark:text-white">{{ profile?.credits ?? 0 }}</p>
             <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Giá mỗi credits: 15.000 VND</p>
             <div class="mt-4 flex flex-wrap gap-3">
               <UButton to="/dashboard/purchase" color="primary">Mua thêm credits</UButton>
             </div>
-          </div>
-        </div>
       </UCard>
 
       <UCard>

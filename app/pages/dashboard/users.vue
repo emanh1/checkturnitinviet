@@ -2,7 +2,7 @@
 import type { Profile } from '~/types'
 
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-admin',
   layout: 'dashboard'
 })
 
@@ -14,12 +14,6 @@ const { isAdmin, loading: userLoading } = useUser()
 const router = useRouter()
 const toast = useToast()
 const supabase = useSupabaseClient()
-
-watchEffect(() => {
-  if (!userLoading.value && !isAdmin.value) {
-    router.push('/dashboard')
-  }
-})
 
 const users = ref<Profile[]>([])
 const loading = ref(false)
@@ -109,7 +103,7 @@ const saveUser = async () => {
             Quản lý tất cả người dùng, phân quyền và cộng/trừ credits.
           </p>
         </div>
-        <UButton color="white" icon="i-lucide-refresh-cw" @click="fetchUsers" :loading="loading">
+        <UButton color="neutral" icon="i-lucide-refresh-cw" @click="fetchUsers" :loading="loading">
           Làm mới
         </UButton>
       </div>

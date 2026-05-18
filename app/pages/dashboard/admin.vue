@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Order } from '~/types'
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-admin',
   layout: 'dashboard'
 })
 
@@ -14,12 +14,6 @@ const { orders, fetchOrders, assignOrder, submitReport, downloadDocument, subscr
 const router = useRouter()
 const supabase = useSupabaseClient()
 const toast = useToast()
-
-watchEffect(() => {
-  if (!loading.value && profile.value && !isAdmin.value) {
-    router.push('/dashboard')
-  }
-})
 
 const reportModal = ref(false)
 const currentOrder = ref<Order | null>(null)
@@ -310,7 +304,7 @@ onUnmounted(() => {
             <div class="text-center mt-2">{{ similarityScore }}%</div>
           </UFormField>
           <UFormField label="Ghi chú thêm">
-            <UTextarea v-model="notes" placeholder="Nhập ghi chú về báo cáo..." rows="3" />
+            <UTextarea v-model="notes" placeholder="Nhập ghi chú về báo cáo..." :rows="3" />
           </UFormField>
         </div>
         <template #footer>

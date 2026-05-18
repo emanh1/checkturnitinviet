@@ -10,7 +10,7 @@ useSeoMeta({
   title: 'Payment Success'
 })
 
-const { profile, fetchProfile } = useUser()
+const { profile, fetch } = useUser()
 const router = useRouter()
 const toast = useToast()
 const isVerifying = ref(true)
@@ -36,8 +36,7 @@ onMounted(async () => {
 
     if (paymentRes?.status === 'completed') {
       // Refresh user profile to show updated credits
-      await fetchProfile()
-
+      await fetch()
       toast.add({
         title: 'Thanh toán thành công!',
         description: `Bạn đã nhận được ${paymentRes.creditsAdded || 0} credits`,

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Order } from '~/types'
+import DashboardOrdersTable from '~/components/dashboard/OrdersTable.vue'
+
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-employee',
   layout: 'dashboard'
 })
 
@@ -14,19 +16,11 @@ const { orders, fetchOrders, assignOrder, submitReport, downloadDocument, subscr
 const router = useRouter()
 const toast = useToast()
 
-watchEffect(() => {
-  if (!loading.value && profile.value && !isEmployee.value && !isAdmin.value) {
-    router.push('/dashboard')
-  }
-})
-
 const reportModal = ref(false)
 const currentOrder = ref<Order | null>(null)
 const aiScore = ref(0)
 const similarityScore = ref(0)
 const notes = ref('')
-
-import DashboardOrdersTable from '~/components/dashboard/OrdersTable.vue'
 
 const handleAssignOrder = async (order: Order) => {
   try {
@@ -135,11 +129,12 @@ onUnmounted(() => {
         <DashboardOrdersTable
           :orders="orders"
           user-role="employee"
-          :profile-id="profile?.id"
+          :profile-id="profile!.id"
           @assign="handleAssignOrder"
           @download-document="handleDownload"
           @submit-report="openReportModal"
         >
+        // TODO ^^ LOL
           <template #empty-state>
             Không có đơn hàng nào để xử lý.
           </template>

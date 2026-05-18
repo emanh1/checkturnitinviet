@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-admin',
   layout: 'dashboard'
 })
 
@@ -11,13 +11,8 @@ useSeoMeta({
 })
 
 const toast = useToast()
-const { profile, updateProfile, isAdmin } = useUser()
+const { profile, isAdmin } = useUser()
 const { settings, fetchSettings, updateSettings } = useSettings()
-
-const isSavingProfile = ref(false)
-const profileForm = ref({
-  name: ''
-})
 
 const isSavingSystem = ref(false)
 const systemForm = ref({
@@ -30,10 +25,6 @@ const systemForm = ref({
 })
 
 onMounted(async () => {
-  if (profile.value) {
-    profileForm.value.name = profile.value.name || ''
-  }
-
   if (isAdmin.value) {
     const s = await fetchSettings(true)
     if (s) {
@@ -48,24 +39,6 @@ onMounted(async () => {
     }
   }
 })
-
-const handleSaveProfile = async () => {
-  if (!profileForm.value.name.trim()) {
-    toast.add({ title: 'Lỗi', description: 'Tên không được để trống', color: 'error' })
-    return
-  }
-
-  isSavingProfile.value = true
-  try {
-    await updateProfile({ name: profileForm.value.name })
-    toast.add({ title: 'Thành công', description: 'Đã cập nhật thông tin cá nhân', color: 'primary' })
-  } catch (error: unknown) {
-    const err = error as Error
-    toast.add({ title: 'Lỗi', description: err.message || 'Không thể lưu', color: 'error' })
-  } finally {
-    isSavingProfile.value = false
-  }
-}
 
 const handleSaveSystem = async () => {
   isSavingSystem.value = true
@@ -100,23 +73,6 @@ const handleSaveSystem = async () => {
       </div>
 
       <div class="grid gap-6 md:grid-cols-2">
-        <!-- Profile Settings -->
-        <UCard>
-          <template #header>
-            <h2 class="text-xl font-semibold">Hồ sơ cá nhân</h2>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Cập nhật thông tin hiển thị của bạn.</p>
-          </template>
-
-          <form @submit.prevent="handleSaveProfile" class="space-y-4">
-            <UFormField label="Tên hiển thị">
-              <UInput v-model="profileForm.name" placeholder="Nhập tên của bạn" />
-            </UFormField>
-
-            <div class="flex justify-end">
-              <UButton type="submit" color="primary" :loading="isSavingProfile">Lưu thay đổi</UButton>
-            </div>
-          </form>
-        </UCard>
 
         <!-- Admin Settings -->
         <UCard v-if="isAdmin">

@@ -1,4 +1,4 @@
-import type { Order } from '~/types'
+import { type Profile, type Order } from '~/types'
 
 export const useOrders = () => {
   const supabase = useSupabaseClient()

@@ -17,8 +17,7 @@ export const formatDateTime = (value: string | null | undefined) => {
   }).format(new Date(value))
 }
 
-import type { Order } from '~/types'
 
-export const getFilePages = (order: Order) => {
-  return order.reports?.details?.pages ?? order.documents?.pages ?? '-'
+export function formatDate(date: Date): string {
+  return date.toISOString().replace(/[-:T.Z]/g, '').slice(0, 14)
 }

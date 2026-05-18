@@ -10,16 +10,10 @@ useSeoMeta({
   title: 'Upload Document'
 })
 
-const { profile, isCustomer, fetchProfile, loading } = useUser()
+const { profile, isCustomer, loading } = useUser()
 const { uploadFile } = useCustomFileUpload()
 const router = useRouter()
 const toast = useToast()
-
-watchEffect(() => {
-  if (!loading.value && profile.value && !isCustomer.value) {
-    router.push('/dashboard/work')
-  }
-})
 
 const checkType = ref<'ai' | 'similarity' | 'combo'>('combo')
 const uploading = ref(false)
@@ -36,7 +30,6 @@ const handleFileDrop = async (files: File[]) => {
       title: 'Upload thành công',
       description: 'Tài liệu đã được tải lên và đơn hàng đã được tạo'
     })
-    await fetchProfile()
     await router.push('/dashboard')
   } catch (error: unknown) {
     const err = error as Error
@@ -86,10 +79,6 @@ const handleFileDrop = async (files: File[]) => {
           @change="(files) => handleFileDrop(Array.from(files))"
         />
       </UCard>
-
-      <div class="text-center">
-        <UButton variant="outline" to="/dashboard">Quay lại Dashboard</UButton>
-      </div>
     </div>
   </UDashboardPanel>
 </template>

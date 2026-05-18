@@ -15,3 +15,10 @@ export type Profile = ProfileRow
 
 export type SystemSettingsRow = Database['public']['Tables']['system_settings']['Row']
 export type SystemSettings = SystemSettingsRow
+
+export interface ReportFileData {
+  fileName: string
+  fileSize: number
+  pages: number
+  wordCount: number
+}

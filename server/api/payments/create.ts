@@ -1,6 +1,16 @@
-import { serverSupabaseUser } from '#supabase/server'
+import { serverSupabaseClient, serverSupabaseUser } from '#supabase/server'
 import crypto from 'crypto'
 import { z } from 'zod'
+import type { H3Event } from 'h3'
+
+function getClientIP(event: H3Event): string {
+  const forwarded = getHeader(event, 'x-forwarded-for')
+  if (forwarded) {
+    // @ts-ignore
+    return typeof forwarded === 'string' ? forwarded.split(',')[0] : forwarded[0]
+  }
+  return event.node.req.socket.remoteAddress || '127.0.0.1'
+}
 
 export default eventHandler(async (event) => {
   const user = await serverSupabaseUser(event)
@@ -16,7 +26,7 @@ export default eventHandler(async (event) => {
     creditPackage: z.number().gt(0)
   }).parse)
 
-  const supabase = useSupabaseClient()
+  const supabase = serverSupabaseClient(event)
   const config = useRuntimeConfig()
 
   const tmnCode = config.vnpayTmnCode
@@ -30,14 +40,11 @@ export default eventHandler(async (event) => {
     })
   }
 
-  // Fetch dynamic credit price from settings
   const { data: settings } = await supabase.from('system_settings').select('credit_price').single()
   const creditPrice = settings?.credit_price || 15000
 
-  // Calculate amount
-  const amount = creditPackage * creditPrice * 100 // VNPay expects amount in cents
+  const amount = creditPackage * creditPrice * 100 // TODO: check if vnpay actually uses cents
 
-  // Create payment record in database
   const transactionId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 
   const { data: paymentRecord, error: dbError } = await supabase
@@ -61,7 +68,6 @@ export default eventHandler(async (event) => {
     })
   }
 
-  // Generate VNPay payment URL
   const createDate = new Date()
   const createDateStr = formatDate(createDate)
   const expireDate = new Date(createDate.getTime() + 15 * 60000) // 15 minutes expiry
@@ -83,17 +89,20 @@ export default eventHandler(async (event) => {
     vnp_ExpireDate: expireDateStr
   }
 
-  // Sort parameters
   const sortedParams = Object.keys(vnpayParams)
     .sort()
-    .reduce((result, key) => {
-      result[key] = vnpayParams[key]
-      return result
-    }, {} as Record<string, string>)
+    .reduce<Record<string, string>>((result, key) => {
+      const value = vnpayParams[key]
 
-  // Create signature
-  const signData = Object.keys(sortedParams)
-    .map(key => `${key}=${encodeURIComponent(sortedParams[key])}`)
+      if (value !== undefined) {
+        result[key] = value
+      }
+
+      return result
+    }, {})
+
+  const signData = Object.entries(sortedParams)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
     .join('&')
 
   const hmac = crypto.createHmac('sha512', hashSecret)
@@ -107,18 +116,3 @@ export default eventHandler(async (event) => {
     transactionId
   }
 })
-
-function formatDate(date: Date): string {
-  return date.toISOString().replace(/[-:T.Z]/g, '').slice(0, 14)
-}
-
-import type { H3Event } from 'h3'
-
-function getClientIP(event: H3Event): string {
-  const forwarded = getHeader(event, 'x-forwarded-for')
-  if (forwarded) {
-    // @ts-ignore
-    return typeof forwarded === 'string' ? forwarded.split(',')[0] : forwarded[0]
-  }
-  return event.node.req.socket.remoteAddress || '127.0.0.1'
-}

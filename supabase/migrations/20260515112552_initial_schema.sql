@@ -159,7 +159,7 @@ BEGIN
       split_part(NEW.email, '@', 1),
       'User'
     ),
-    20
+    0
   );
 
   RETURN NEW;

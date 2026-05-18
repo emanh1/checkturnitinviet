@@ -29,16 +29,12 @@ const items = computed<NavigationMenuItem[]>(() => [
   },
   ...(isEmployee.value || isAdmin.value ? [
     {
-      label: 'Work',
+      label: 'Các file cần check',
       icon: 'i-lucide-briefcase',
       to: '/dashboard/work',
     }
   ] : []),
-  {
-    label: 'Cài đặt',
-    icon: 'i-lucide-settings',
-    to: '/dashboard/settings',
-  },
+
   ...(isAdmin.value ? [
     {
       label: 'Quản lý Người dùng',
@@ -49,6 +45,11 @@ const items = computed<NavigationMenuItem[]>(() => [
       label: 'Admin',
       icon: 'i-lucide-shield-check',
       to: '/dashboard/admin',
+    },
+    {
+      label: 'Cài đặt',
+      icon: 'i-lucide-settings',
+      to: '/dashboard/settings',
     }
   ] : [])
 ])
@@ -88,8 +89,7 @@ const groups = computed(() => [
   <div class="h-screen flex flex-col overflow-hidden">
     <AppAnnouncement />
     <UDashboardGroup unit="rem" class="flex-1">
-      <UDashboardSidebar id="dashboard" class="bg-elevated/25"
-        :ui="{ footer: 'lg:border-t lg:border-default' }">
+      <UDashboardSidebar id="dashboard" class="bg-elevated/25" :ui="{ footer: 'lg:border-t lg:border-default' }">
 
         <template #default="{ collapsed }">
           <!-- <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" /> -->

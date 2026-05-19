@@ -34,25 +34,29 @@ const items = computed<NavigationMenuItem[]>(() => [
       to: '/dashboard/work',
     }
   ] : []),
-
   ...(isAdmin.value ? [
-    {
-      label: 'Quản lý Người dùng',
-      icon: 'i-lucide-users',
-      to: '/dashboard/users',
-    },
     {
       label: 'Admin',
       icon: 'i-lucide-shield-check',
-      to: '/dashboard/admin',
-    },
-    {
-      label: 'Cài đặt',
-      icon: 'i-lucide-settings',
-      to: '/dashboard/settings',
-    }
-  ] : [])
-])
+      defaultOpen: true,
+      children: [
+        {
+          label: 'Quản lý Người dùng',
+          icon: 'i-lucide-users',
+          to: '/dashboard/users',
+        },
+        {
+          label: 'Thống kê',
+          icon: 'i-lucide-shield-check',
+          to: '/dashboard/stats',
+        },
+        {
+          label: 'Cài đặt',
+          icon: 'i-lucide-settings',
+          to: '/dashboard/settings',
+        }
+      ]
+    }] : [])])
 
 const groups = computed(() => [
   {

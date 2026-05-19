@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, format } from 'date-fns'
+import { eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, format, startOfMonth, isSameDay, startOfWeek } from 'date-fns'
 import { VisXYContainer, VisLine, VisAxis, VisArea, VisCrosshair, VisTooltip } from '@unovis/vue'
 import type { Period, Range } from '~/types'
 
@@ -17,27 +17,77 @@ type DataRecord = {
 
 const { width } = useElementSize(cardRef)
 
-const data = ref<DataRecord[]>([])
+const { data: payments } =
+  await useFetch(
+    '/api/revenue',
+    {
+      query: computed(() => ({
+        start:
+          props.range.start.toISOString(),
+        end:
+          props.range.end.toISOString(),
+        period: props.period
+      }))
+    }
+  )
 
-watch([() => props.period, () => props.range], () => {
+const data = computed<DataRecord[]>(() => {
   const dates = ({
     daily: eachDayOfInterval,
     weekly: eachWeekOfInterval,
     monthly: eachMonthOfInterval
-  } as Record<Period, typeof eachDayOfInterval>)[props.period](props.range)
+  } as Record<
+    Period,
+    typeof eachDayOfInterval
+  >)[props.period](props.range)
 
-  const min = 1000
-  const max = 10000
+  return dates.map(date => {
+    let amount = 0
 
-  data.value = dates.map(date => ({ date, amount: Math.floor(Math.random() * (max - min + 1)) + min }))
-}, { immediate: true })
+    for (const p of payments.value || []) {
+      const paymentDate =
+        new Date(p.created_at)
+
+      const same =
+        props.period === 'daily'
+          ? isSameDay(
+              paymentDate,
+              date
+            )
+          : props.period ===
+              'weekly'
+            ? isSameDay(
+                startOfWeek(
+                  paymentDate
+                ),
+                startOfWeek(date)
+              )
+            : isSameDay(
+                startOfMonth(
+                  paymentDate
+                ),
+                startOfMonth(
+                  date
+                )
+              )
+
+      if (same)
+        amount += p.amount
+    }
+
+    return {
+      date,
+      amount
+    }
+  })
+})
 
 const x = (_: DataRecord, i: number) => i
 const y = (d: DataRecord) => d.amount
 
 const total = computed(() => data.value.reduce((acc: number, { amount }) => acc + amount, 0))
 
-const formatNumber = new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format
+const formatNumber = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format
 
 const formatDate = (date: Date): string => {
   return ({
@@ -71,34 +121,13 @@ const template = (d: DataRecord) => `${formatDate(d.date)}: ${formatNumber(d.amo
       </div>
     </template>
 
-    <VisXYContainer
-      :data="data"
-      :padding="{ top: 40 }"
-      class="h-96"
-      :width="width"
-    >
-      <VisLine
-        :x="x"
-        :y="y"
-        color="var(--ui-primary)"
-      />
-      <VisArea
-        :x="x"
-        :y="y"
-        color="var(--ui-primary)"
-        :opacity="0.1"
-      />
+    <VisXYContainer :data="data" :padding="{ top: 40 }" class="h-96" :width="width">
+      <VisLine :x="x" :y="y" color="var(--ui-primary)" />
+      <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
 
-      <VisAxis
-        type="x"
-        :x="x"
-        :tick-format="xTicks"
-      />
+      <VisAxis type="x" :x="x" :tick-format="xTicks" />
 
-      <VisCrosshair
-        color="var(--ui-primary)"
-        :template="template"
-      />
+      <VisCrosshair color="var(--ui-primary)" :template="template" />
 
       <VisTooltip />
     </VisXYContainer>

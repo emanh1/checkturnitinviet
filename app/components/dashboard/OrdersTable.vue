@@ -27,7 +27,36 @@ const columns = computed<TableColumn<Order>[]>(() => {
       cell: ({ row }) =>
         row.original.documents.original_filename
     },
+    {
+      id: 'check_type',
+      header: 'Loại',
 
+      cell: ({ row }) => {
+        const type =
+          row.original.check_type
+
+        const labels = {
+          ai: 'AI',
+          similarity: 'Đạo văn',
+          combo: 'Combo'
+        }
+
+        const colors = {
+          ai: 'primary',
+          similarity: 'warning',
+          combo: 'success'
+        } as const
+
+        return h(
+          UBadge,
+          {
+            color: colors[type],
+            variant: 'subtle'
+          },
+          () => labels[type]
+        )
+      }
+    },
     {
       id: 'size',
       header: 'Size',
@@ -43,7 +72,7 @@ const columns = computed<TableColumn<Order>[]>(() => {
       id: 'customer',
       header: 'Customer',
       cell: ({ row }) =>
-        row.original.profiles?.name ??
+        row.original.customer?.name ??
         'Unknown'
     })
   }
@@ -169,9 +198,9 @@ const columns = computed<TableColumn<Order>[]>(() => {
 
           if (
             order.assigned_to ===
-              props.profileId &&
+            props.profileId &&
             order.status ===
-              'processing'
+            'processing'
           ) {
             buttons.push(
               h(
@@ -210,18 +239,13 @@ const columns = computed<TableColumn<Order>[]>(() => {
 </script>
 
 <template>
-  <UTable
-    :data="orders"
-    :columns="columns"
-    class="shrink-0"
-    :ui="{
-      base: 'table-fixed border-separate border-spacing-0',
-      thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-      tbody: '[&>tr]:last:[&>td]:border-b-0',
-      th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-      td: 'border-b border-default'
-    }"
-  >
+  <UTable :data="orders" :columns="columns" class="shrink-0" :ui="{
+    base: 'table-fixed border-separate border-spacing-0',
+    thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+    tbody: '[&>tr]:last:[&>td]:border-b-0',
+    th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+    td: 'border-b border-default'
+  }">
     <template #empty>
       <div class="py-8 text-center text-muted">
         <slot name="empty-state">

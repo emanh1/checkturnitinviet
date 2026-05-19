@@ -108,20 +108,42 @@ export const useOrders = () => {
 
   // Subscribe to real-time updates for employees and admins
   const subscribeToOrders = () => {
-    if (profile.value?.role !== 'employee' && profile.value?.role !== 'admin') return
+    const toast = useToast()
 
     const channel = supabase
       .channel('orders')
+
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'orders',
-          filter: profile.value?.role === 'admin' ? undefined : `assigned_to=is.null`
+          table: 'orders'
         },
-        () => {
-          fetchOrders()
+        async () => {
+          await fetchOrders()
+
+          toast.add({
+            title: 'Đơn mới',
+            description: 'Có tài liệu mới được tải lên'
+          })
+        }
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders'
+        },
+        async () => {
+          await fetchOrders()
+
+          toast.add({
+            title: 'Cập nhật',
+            description: 'Trạng thái đơn đã thay đổi'
+          })
         }
       )
       .subscribe()

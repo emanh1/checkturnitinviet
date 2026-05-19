@@ -97,6 +97,7 @@ const groups = computed(() => [
       </template>
 
       <template #footer="{ collapsed }">
+        <UColorModeButton />
         <UButton class="w-full" color="error" icon="i-lucide-log-out" label="Đăng xuất" variant="ghost"
           @click="logout" />
       </template>

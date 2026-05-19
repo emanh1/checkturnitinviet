@@ -86,25 +86,23 @@ const groups = computed(() => [
 </script>
 
 <template>
-  <div class="h-screen flex flex-col overflow-hidden">
-    <AppAnnouncement />
-    <UDashboardGroup unit="rem" class="flex-1">
-      <UDashboardSidebar id="dashboard" class="bg-elevated/25" :ui="{ footer: 'lg:border-t lg:border-default' }">
+  <AppAnnouncement />
+  <UDashboardGroup unit="rem">
+    <UDashboardSidebar id="dashboard" class="bg-elevated/25" :ui="{ footer: 'lg:border-t lg:border-default' }">
 
-        <template #default="{ collapsed }">
-          <!-- <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" /> -->
-          <AppLogo />
-          <UNavigationMenu :collapsed="collapsed" :items="items" orientation="vertical" tooltip popover highlight />
-        </template>
+      <template #default="{ collapsed }">
+        <!-- <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" /> -->
+        <AppLogo />
+        <UNavigationMenu :collapsed="collapsed" :items="items" orientation="vertical" tooltip popover highlight />
+      </template>
 
-        <template #footer="{ collapsed }">
-          <UButton class="w-full" color="error" icon="i-lucide-log-out" label="Đăng xuất" variant="ghost"
-            @click="logout" />
-        </template>
-      </UDashboardSidebar>
+      <template #footer="{ collapsed }">
+        <UButton class="w-full" color="error" icon="i-lucide-log-out" label="Đăng xuất" variant="ghost"
+          @click="logout" />
+      </template>
+    </UDashboardSidebar>
 
-      <UDashboardSearch :groups="groups" />
-      <slot />
-    </UDashboardGroup>
-  </div>
+    <UDashboardSearch :groups="groups" />
+    <slot />
+  </UDashboardGroup>
 </template>

@@ -21,3 +21,5 @@ export const formatDateTime = (value: string | null | undefined) => {
 export function formatDate(date: Date): string {
   return date.toISOString().replace(/[-:T.Z]/g, '').slice(0, 14)
 }
+export const formatCurrency = (value?: number) =>
+  new Intl.NumberFormat('vi-VN').format(value ?? 0)

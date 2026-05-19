@@ -74,9 +74,6 @@ watch(isCustomer, async (customer) => {
         </template>
 
         <DashboardOrdersTable :orders="orders" user-role="customer" :profile-id="profile?.id">
-          <template #empty-state>
-            Bạn chưa có tài liệu nào để hiển thị. Hãy tải lên tài liệu mới ngay.
-          </template>
         </DashboardOrdersTable>
       </UCard>
     </template>

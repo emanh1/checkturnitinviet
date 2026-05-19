@@ -105,48 +105,36 @@ onUnmounted(() => {
 <template>
   <UDashboardPanel id="work" :ui="{ body: 'lg:py-8' }">
     <template #body>
-
       <UCard>
-        <template #header>
-          <h2 class="text-xl font-semibold">Đơn hàng cần xử lý</h2>
-          <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Đơn hàng chưa được giao hoặc đang xử lý bởi bạn.
-          </p>
-        </template>
-
         <DashboardOrdersTable :orders="orders" user-role="employee" :profile-id="profile!.id"
           @assign="handleAssignOrder" @download-document="handleDownload" @submit-report="openReportModal">
           // TODO ^^ LOL
-          <template #empty-state>
-            Không có đơn hàng nào để xử lý.
-          </template>
         </DashboardOrdersTable>
       </UCard>
 
-      <UModal v-model="reportModal">
-        <UCard>
-          <template #header>
-            <h3 class="text-lg font-semibold">Nộp báo cáo</h3>
-          </template>
-          <div class="space-y-4">
-            <UFormField label="Điểm AI (0-100)">
-              <USlider v-model="aiScore" :min="0" :max="100" />
-              <div class="text-center mt-2">{{ aiScore }}%</div>
-            </UFormField>
-            <UFormField label="Điểm đạo văn (0-100)">
-              <USlider v-model="similarityScore" :min="0" :max="100" />
-              <div class="text-center mt-2">{{ similarityScore }}%</div>
-            </UFormField>
-            <UFormField label="Ghi chú thêm">
-              <UTextarea v-model="notes" placeholder="Nhập ghi chú về báo cáo..." :rows="3" />
-            </UFormField>
+      <UModal v-model:open="reportModal">
+        <template #header>
+          <h3 class="text-lg font-semibold">Nộp báo cáo</h3>
+        </template>
+        <template #body>
+          <UFormField label="Điểm AI (0-100)">
+            <USlider v-model="aiScore" :min="0" :max="100" />
+            <div class="text-center mt-2">{{ aiScore }}%</div>
+          </UFormField>
+          <UFormField label="Điểm đạo văn (0-100)">
+            <USlider v-model="similarityScore" :min="0" :max="100" />
+            <div class="text-center mt-2">{{ similarityScore }}%</div>
+          </UFormField>
+          <UFormField label="Ghi chú thêm">
+            <UTextarea v-model="notes" placeholder="Nhập ghi chú về báo cáo..." :rows="3" />
+          </UFormField>
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton variant="outline" @click="reportModal = false">Hủy</UButton>
+            <UButton color="primary" @click="submitOrderReport">Nộp báo cáo</UButton>
           </div>
-          <template #footer>
-            <div class="flex justify-end gap-2">
-              <UButton variant="outline" @click="reportModal = false">Hủy</UButton>
-              <UButton color="primary" @click="submitOrderReport">Nộp báo cáo</UButton>
-            </div>
-          </template>
-        </UCard>
+        </template>
       </UModal>
     </template>
   </UDashboardPanel>

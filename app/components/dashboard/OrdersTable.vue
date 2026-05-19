@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { h, resolveComponent, computed } from 'vue'
+import type { TableColumn } from '@nuxt/ui'
 import { formatBytes, formatDateTime } from '~/utils/formatters'
 import type { Order } from '~/types'
 
 const props = defineProps<{
-  orders: readonly Order[]
+  orders: Order[]
   userRole: 'customer' | 'employee' | 'admin'
   profileId: string
 }>()
@@ -13,88 +15,219 @@ const emit = defineEmits<{
   (e: 'download-document', order: Order): void
   (e: 'submit-report', order: Order): void
 }>()
+
+const UBadge = resolveComponent('UBadge')
+const UButton = resolveComponent('UButton')
+
+const columns = computed<TableColumn<Order>[]>(() => {
+  const cols: TableColumn<Order>[] = [
+    {
+      id: 'file',
+      header: 'File',
+      cell: ({ row }) =>
+        row.original.documents.file_name
+    },
+
+    {
+      id: 'size',
+      header: 'Size',
+      cell: ({ row }) =>
+        formatBytes(
+          row.original.documents.file_size
+        )
+    }
+  ]
+
+  if (props.userRole !== 'customer') {
+    cols.push({
+      id: 'customer',
+      header: 'Customer',
+      cell: ({ row }) =>
+        row.original.profiles?.name ??
+        'Unknown'
+    })
+  }
+
+  if (props.userRole === 'customer') {
+    cols.push(
+      {
+        id: 'ai',
+        header: 'AI',
+        cell: ({ row }) =>
+          `${row.original.reports?.ai_score ?? '-'}%`
+      },
+      {
+        id: 'similarity',
+        header: 'Similarity',
+        cell: ({ row }) =>
+          `${row.original.reports?.similarity_score ?? '-'}%`
+      }
+    )
+  }
+
+  cols.push(
+    {
+      id: 'date',
+      header: 'Time added',
+      cell: ({ row }) =>
+        formatDateTime(
+          row.original.created_at ||
+          row.original.documents
+            .uploaded_at
+        )
+    },
+
+    {
+      id: 'status',
+      header: 'Status',
+
+      cell: ({ row }) => {
+        const status =
+          row.original.status ||
+          'pending'
+
+        const color = {
+          completed: 'success',
+          processing: 'primary',
+          pending: 'warning',
+          failed: 'error'
+        }[
+          status
+        ] as
+          | 'success'
+          | 'primary'
+          | 'warning'
+          | 'error'
+
+        return h(
+          UBadge,
+          {
+            color,
+            variant: 'subtle',
+            class: 'capitalize'
+          },
+          () => status
+        )
+      }
+    },
+
+    {
+      id: 'actions',
+      header: '',
+
+      cell: ({ row }) => {
+        const order =
+          row.original
+
+        const buttons = []
+
+        if (
+          props.userRole !==
+          'customer'
+        ) {
+          if (!order.assigned_to) {
+            buttons.push(
+              h(
+                UButton,
+                {
+                  size: 'xs',
+                  color: 'primary',
+                  variant:
+                    'outline',
+                  onClick: () =>
+                    emit(
+                      'assign',
+                      order
+                    )
+                },
+                () => 'Nhận'
+              )
+            )
+          }
+
+          if (
+            order.assigned_to ===
+            props.profileId
+          ) {
+            buttons.push(
+              h(
+                UButton,
+                {
+                  size: 'xs',
+                  variant:
+                    'outline',
+                  onClick: () =>
+                    emit(
+                      'download-document',
+                      order
+                    )
+                },
+                () => 'Tải xuống'
+              )
+            )
+          }
+
+          if (
+            order.assigned_to ===
+              props.profileId &&
+            order.status ===
+              'processing'
+          ) {
+            buttons.push(
+              h(
+                UButton,
+                {
+                  size: 'xs',
+                  color:
+                    'primary',
+                  onClick: () =>
+                    emit(
+                      'submit-report',
+                      order
+                    )
+                },
+                () =>
+                  'Nộp báo cáo'
+              )
+            )
+          }
+        }
+
+        return h(
+          'div',
+          {
+            class:
+              'flex gap-2'
+          },
+          buttons
+        )
+      }
+    }
+  )
+
+  return cols
+})
 </script>
 
 <template>
-  <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-      <thead class="bg-slate-50 text-left text-xs uppercase tracking-[0.16em] text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-        <tr>
-          <th class="px-4 py-3">File name</th>
-          <th class="px-4 py-3">File size</th>
-          <th v-if="userRole !== 'customer'" class="px-4 py-3">Customer</th>
-          <th v-if="userRole === 'customer'" class="px-4 py-3">AI</th>
-          <th v-if="userRole === 'customer'" class="px-4 py-3">Similarity</th>
-          <th class="px-4 py-3">Time added</th>
-          <th class="px-4 py-3">Status</th>
-          <th class="px-4 py-3">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-200 bg-white dark:divide-slate-700 dark:bg-slate-950">
-        <tr v-for="order in orders" :key="order.id">
-          <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">{{ order.documents.file_name }}</td>
-          <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">{{ formatBytes(order.documents.file_size) }}</td>
-          
-          <td v-if="userRole !== 'customer'" class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
-            {{ order.profiles?.name || 'Unknown' }}
-          </td>
-          
-          <td v-if="userRole === 'customer'" class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-white">
-            {{ order.reports?.ai_score ?? '-' }}%
-          </td>
-          <td v-if="userRole === 'customer'" class="px-4 py-4 whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-white">
-            {{ order.reports?.similarity_score ?? '-' }}%
-          </td>
-
-          <td class="px-4 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
-            {{ formatDateTime(order.created_at || order.documents.uploaded_at) }}
-          </td>
-          <td class="px-4 py-4 whitespace-nowrap text-sm">
-            <span :class="['inline-flex rounded-full px-3 py-1 text-xs font-semibold',
-              order.status === 'completed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200' :
-              order.status === 'processing' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-200' :
-              'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-200']">
-              {{ order.status || 'pending' }}
-            </span>
-          </td>
-          
-          <td class="px-4 py-4 whitespace-nowrap text-sm space-x-2">
-            <!-- Admin/Employee Actions -->
-            <template v-if="userRole !== 'customer'">
-              <UButton
-                v-if="!order.assigned_to"
-                size="sm"
-                color="primary"
-                variant="outline"
-                @click="emit('assign', order)"
-              >
-                Nhận
-              </UButton>
-              <UButton
-                v-if="order.assigned_to === profileId"
-                size="sm"
-                variant="outline"
-                @click="emit('download-document', order)"
-              >
-                Tải xuống
-              </UButton>
-              <UButton
-                v-if="order.assigned_to === profileId && order.status === 'processing'"
-                size="sm"
-                color="primary"
-                @click="emit('submit-report', order)"
-              >
-                Nộp báo cáo
-              </UButton>
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-if="orders.length === 0" class="py-8 text-center text-slate-500 dark:text-slate-400">
-      <slot name="empty-state">
-        Không có dữ liệu.
-      </slot>
-    </div>
-  </div>
+  <UTable
+    :data="orders"
+    :columns="columns"
+    class="shrink-0"
+    :ui="{
+      base: 'table-fixed border-separate border-spacing-0',
+      thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+      tbody: '[&>tr]:last:[&>td]:border-b-0',
+      th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+      td: 'border-b border-default'
+    }"
+  >
+    <template #empty>
+      <div class="py-8 text-center text-muted">
+        <slot name="empty-state">
+          Không có dữ liệu.
+        </slot>
+      </div>
+    </template>
+  </UTable>
 </template>

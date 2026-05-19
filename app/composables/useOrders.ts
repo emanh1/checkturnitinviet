@@ -132,8 +132,8 @@ export const useOrders = () => {
   }
 
   return {
-    orders: readonly(orders),
-    loading: readonly(loading),
+    orders,
+    loading,
     fetchOrders,
     assignOrder,
     submitReport,

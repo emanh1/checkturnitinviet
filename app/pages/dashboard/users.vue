@@ -89,29 +89,20 @@ const saveUser = async () => {
 
 <template>
   <UDashboardPanel id="users" :ui="{ body: 'lg:py-8' }">
-    <UDashboardNavbar title="Quản lý người dùng">
-      <template #right>
-        <UDashboardSidebarCollapse />
-      </template>
-    </UDashboardNavbar>
-
-    <div class="space-y-6">
-      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Người dùng</h1>
-          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Quản lý tất cả người dùng, phân quyền và cộng/trừ credits.
-          </p>
-        </div>
-        <UButton color="neutral" icon="i-lucide-refresh-cw" @click="fetchUsers" :loading="loading">
-          Làm mới
-        </UButton>
-      </div>
-
+    <template #body>
       <UCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Quản lý người dùng</h2>
+            <UButton color="neutral" icon="i-lucide-refresh-cw" @click="fetchUsers" :loading="loading">
+              Làm mới
+            </UButton>
+          </div>
+        </template>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead class="bg-slate-50 text-left text-xs uppercase tracking-[0.16em] text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+            <thead
+              class="bg-slate-50 text-left text-xs uppercase tracking-[0.16em] text-slate-500 dark:bg-slate-900 dark:text-slate-400">
               <tr>
                 <th class="px-4 py-3">Tên</th>
                 <th class="px-4 py-3">Vai trò</th>
@@ -129,8 +120,8 @@ const saveUser = async () => {
                   <span :class="[
                     'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
                     user.role === 'admin' ? 'bg-red-50 text-red-700 ring-red-600/10 dark:bg-red-900/20 dark:text-red-400' :
-                    user.role === 'employee' ? 'bg-blue-50 text-blue-700 ring-blue-600/10 dark:bg-blue-900/20 dark:text-blue-400' :
-                    'bg-green-50 text-green-700 ring-green-600/10 dark:bg-green-900/20 dark:text-green-400'
+                      user.role === 'employee' ? 'bg-blue-50 text-blue-700 ring-blue-600/10 dark:bg-blue-900/20 dark:text-blue-400' :
+                        'bg-green-50 text-green-700 ring-green-600/10 dark:bg-green-900/20 dark:text-green-400'
                   ]">
                     {{ user.role || 'customer' }}
                   </span>
@@ -156,37 +147,34 @@ const saveUser = async () => {
           </table>
         </div>
       </UCard>
-    </div>
 
-    <UModal v-model="editModal">
-      <UCard>
-        <template #header>
-          <h3 class="text-lg font-semibold">Chỉnh sửa người dùng</h3>
-          <p class="text-sm text-slate-500">{{ currentUser?.name }}</p>
-        </template>
-        
-        <form @submit.prevent="saveUser" class="space-y-4">
-          <UFormField label="Vai trò">
-            <USelect 
-              v-model="editForm.role" 
-              :options="[
+      <!-- <UModal v-model="editModal">
+        <UCard>
+          <template #header>
+            <h3 class="text-lg font-semibold">Chỉnh sửa người dùng</h3>
+            <p class="text-sm text-slate-500">{{ currentUser?.name }}</p>
+          </template>
+
+          <form @submit.prevent="saveUser" class="space-y-4">
+            <UFormField label="Vai trò">
+              <USelect v-model="editForm.role" :options="[
                 { label: 'Khách hàng', value: 'customer' },
                 { label: 'Nhân viên', value: 'employee' },
                 { label: 'Admin', value: 'admin' }
-              ]"
-            />
-          </UFormField>
+              ]" />
+            </UFormField>
 
-          <UFormField label="Credits">
-            <UInput v-model="editForm.credits" type="number" min="0" />
-          </UFormField>
+            <UFormField label="Credits">
+              <UInput v-model="editForm.credits" type="number" min="0" />
+            </UFormField>
 
-          <div class="flex justify-end gap-2 pt-4">
-            <UButton variant="outline" @click="editModal = false">Hủy</UButton>
-            <UButton type="submit" color="primary" :loading="isSaving">Lưu thay đổi</UButton>
-          </div>
-        </form>
-      </UCard>
-    </UModal>
+            <div class="flex justify-end gap-2 pt-4">
+              <UButton variant="outline" @click="editModal = false">Hủy</UButton>
+              <UButton type="submit" color="primary" :loading="isSaving">Lưu thay đổi</UButton>
+            </div>
+          </form>
+        </UCard>
+      </UModal> -->
+    </template>
   </UDashboardPanel>
 </template>

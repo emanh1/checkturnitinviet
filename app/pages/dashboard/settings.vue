@@ -58,62 +58,47 @@ const handleSaveSystem = async () => {
 
 <template>
   <UDashboardPanel id="settings" :ui="{ body: 'lg:py-8' }">
-    <UDashboardNavbar title="Cài đặt">
-      <template #right>
-        <UDashboardSidebarCollapse />
-      </template>
-    </UDashboardNavbar>
+    <template #body>
+      <UPageCard spotlight>
+        <template #header>
+          <h2 class="text-xl font-semibold">Cài đặt hệ thống (Admin)</h2>
+          <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Quản lý giá trị quy đổi và thông báo.</p>
+        </template>
 
-    <div class="space-y-6">
-      <div>
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Cài đặt</h1>
-        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Quản lý thông tin tài khoản và cài đặt.
-        </p>
-      </div>
+        <form @submit.prevent="handleSaveSystem" class="space-y-4"> 
+          <!-- //TODO REPLACE WITH UFORM -->
+          <UFormField label="Giá 1 Credit (VNĐ)">
+            <UInput v-model="systemForm.credit_price" type="number" min="0" />
+          </UFormField>
 
-      <div class="grid gap-6 md:grid-cols-2">
-
-        <!-- Admin Settings -->
-        <UCard v-if="isAdmin">
-          <template #header>
-            <h2 class="text-xl font-semibold">Cài đặt hệ thống (Admin)</h2>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">Quản lý giá trị quy đổi và thông báo.</p>
-          </template>
-
-          <form @submit.prevent="handleSaveSystem" class="space-y-4">
-            <UFormField label="Giá 1 Credit (VNĐ)">
-              <UInput v-model="systemForm.credit_price" type="number" min="0" />
+          <div class="grid grid-cols-3 gap-4">
+            <UFormField label="Phí AI">
+              <UInput v-model="systemForm.ai_credit_cost" type="number" min="0" />
             </UFormField>
-
-            <div class="grid grid-cols-3 gap-4">
-              <UFormField label="Phí AI">
-                <UInput v-model="systemForm.ai_credit_cost" type="number" min="0" />
-              </UFormField>
-              <UFormField label="Phí Đạo văn">
-                <UInput v-model="systemForm.similarity_credit_cost" type="number" min="0" />
-              </UFormField>
-              <UFormField label="Phí Combo">
-                <UInput v-model="systemForm.combo_credit_cost" type="number" min="0" />
-              </UFormField>
-            </div>
-
-            <USeparator class="my-4" />
-
-            <UFormField label="Bật thông báo băng rôn">
-              <USwitch v-model="systemForm.announcement_active" />
+            <UFormField label="Phí Đạo văn">
+              <UInput v-model="systemForm.similarity_credit_cost" type="number" min="0" />
             </UFormField>
-
-            <UFormField label="Nội dung thông báo (hỗ trợ văn bản)">
-              <UTextarea v-model="systemForm.announcement_text" placeholder="Khuyến mãi đặc biệt hôm nay..." :disabled="!systemForm.announcement_active" />
+            <UFormField label="Phí Combo">
+              <UInput v-model="systemForm.combo_credit_cost" type="number" min="0" />
             </UFormField>
+          </div>
 
-            <div class="flex justify-end">
-              <UButton type="submit" color="primary" :loading="isSavingSystem">Lưu hệ thống</UButton>
-            </div>
-          </form>
-        </UCard>
-      </div>
-    </div>
+          <USeparator class="my-4" />
+
+          <UFormField label="Bật thông báo băng rôn">
+            <USwitch v-model="systemForm.announcement_active" />
+          </UFormField>
+
+          <UFormField label="Nội dung thông báo (hỗ trợ văn bản)">
+            <UTextarea v-model="systemForm.announcement_text" placeholder="Khuyến mãi đặc biệt hôm nay..."
+              :disabled="!systemForm.announcement_active" />
+          </UFormField>
+
+          <div class="flex justify-end">
+            <UButton type="submit" color="primary" :loading="isSavingSystem">Lưu hệ thống</UButton>
+          </div>
+        </form>
+      </UPageCard>
+    </template>
   </UDashboardPanel>
 </template>

@@ -23,18 +23,14 @@ const buyCredits = async (creditPackage: number) => {
 </script>
 
 <template>
+  <!-- TODO REPLACE WITH NUMBER FORM TO BUY SPECIFIC NUMBER OF CREDITS -->
   <UDashboardPanel id="purchase" :ui="{ body: 'lg:py-8' }">
-    <UDashboardNavbar title="Mua credits">
-      <template #right>
-        <UDashboardSidebarCollapse />
-      </template>
-    </UDashboardNavbar>
-
-    <div class="space-y-6">
+    <template #body>
       <div class="text-center">
         <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Mua credits</h1>
         <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-          Mỗi credits có giá {{ (settings?.credit_price || 15000).toLocaleString('vi-VN') }} VND. Kiểm tra đơn giản: {{ settings?.ai_credit_cost || 1 }} credits, Combo: {{ settings?.combo_credit_cost || 2 }} credits.
+          Mỗi credits có giá {{ (settings?.credit_price || 15000).toLocaleString('vi-VN') }} VND. Kiểm tra đơn giản: {{
+            settings?.ai_credit_cost || 1 }} credits, Combo: {{ settings?.combo_credit_cost || 2 }} credits.
         </p>
       </div>
 
@@ -44,7 +40,9 @@ const buyCredits = async (creditPackage: number) => {
             <h2 class="text-xl font-semibold">Gói nhỏ</h2>
           </template>
           <div class="space-y-4">
-            <div class="text-3xl font-bold text-primary">{{ ((settings?.credit_price || 15000) * 10).toLocaleString('vi-VN') }} VND</div>
+            <div class="text-3xl font-bold text-primary">{{ ((settings?.credit_price || 15000) *
+              10).toLocaleString('vi-VN') }}
+              VND</div>
             <p class="text-sm text-slate-600 dark:text-slate-300">10 credits</p>
             <ul class="space-y-2 text-sm">
               <li>✓ 10 lần kiểm tra đơn giản</li>
@@ -63,7 +61,9 @@ const buyCredits = async (creditPackage: number) => {
             <h2 class="text-xl font-semibold">Gói phổ biến</h2>
           </template>
           <div class="space-y-4">
-            <div class="text-3xl font-bold text-primary">{{ ((settings?.credit_price || 15000) * 50).toLocaleString('vi-VN') }} VND</div>
+            <div class="text-3xl font-bold text-primary">{{ ((settings?.credit_price || 15000) *
+              50).toLocaleString('vi-VN') }}
+              VND</div>
             <p class="text-sm text-slate-600 dark:text-slate-300">50 credits</p>
             <ul class="space-y-2 text-sm">
               <li>✓ 50 lần kiểm tra đơn giản</li>
@@ -82,7 +82,9 @@ const buyCredits = async (creditPackage: number) => {
             <h2 class="text-xl font-semibold">Gói lớn</h2>
           </template>
           <div class="space-y-4">
-            <div class="text-3xl font-bold text-primary">{{ ((settings?.credit_price || 15000) * 100).toLocaleString('vi-VN') }} VND</div>
+            <div class="text-3xl font-bold text-primary">{{ ((settings?.credit_price || 15000) *
+              100).toLocaleString('vi-VN') }}
+              VND</div>
             <p class="text-sm text-slate-600 dark:text-slate-300">100 credits</p>
             <ul class="space-y-2 text-sm">
               <li>✓ 100 lần kiểm tra đơn giản</li>
@@ -108,6 +110,6 @@ const buyCredits = async (creditPackage: number) => {
         </div>
       </UCard>
 
-    </div>
+    </template>
   </UDashboardPanel>
 </template>

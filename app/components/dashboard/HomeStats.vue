@@ -22,13 +22,6 @@ const baseStats = [{
   minVariation: -15,
   maxVariation: 25
 }, {
-  title: 'Conversions',
-  icon: 'i-lucide-chart-pie',
-  minValue: 1000,
-  maxValue: 2000,
-  minVariation: -10,
-  maxVariation: 20
-}, {
   title: 'Revenue',
   icon: 'i-lucide-circle-dollar-sign',
   minValue: 200000,
@@ -43,7 +36,22 @@ const baseStats = [{
   maxValue: 300,
   minVariation: -5,
   maxVariation: 15
-}]
+}, {
+  title: 'Orders processed',
+  icon: 'i-lucide-package-search',
+  minValue: 100,
+  maxValue: 300,
+  minVariation: -5,
+  maxVariation: 15,
+}
+]
+
+function randomInt(min: number, max: number): number {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
   return baseStats.map((stat) => {
@@ -70,7 +78,6 @@ const { data: stats } = await useAsyncData<Stat[]>('stats', async () => {
       :key="index"
       :icon="stat.icon"
       :title="stat.title"
-      to="/customers"
       variant="subtle"
       :ui="{
         container: 'gap-y-1.5',

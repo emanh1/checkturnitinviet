@@ -73,7 +73,8 @@ onMounted(async () => {
 
 <template>
   <UDashboardPanel id="payment-success" :ui="{ body: 'lg:py-8' }">
-    <div class="space-y-6">
+    <template #body>
+
       <div v-if="isVerifying" class="text-center py-12">
         <UIcon name="i-lucide-loader" class="mx-auto h-12 w-12 animate-spin text-primary" />
         <p class="mt-4 text-slate-600 dark:text-slate-300">Đang xác minh thanh toán...</p>
@@ -102,6 +103,6 @@ onMounted(async () => {
           <UButton to="/dashboard/upload" variant="outline">Tải lên tài liệu</UButton>
         </div>
       </div>
-    </div>
+    </template>
   </UDashboardPanel>
 </template>

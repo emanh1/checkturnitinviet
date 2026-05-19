@@ -15,7 +15,8 @@ export const useOrders = () => {
         .select(`
           *,
           documents (*),
-          profiles (*),
+          customer:profiles!orders_user_id_fkey(*),
+          assignee:profiles!orders_assigned_to_fkey(*),
           reports (*)
         `)
 

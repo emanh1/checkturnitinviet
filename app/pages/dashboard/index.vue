@@ -29,7 +29,7 @@ watch(isCustomer, async (customer) => {
   <UDashboardPanel id="dashboard" :ui="{ body: 'lg:py-8' }" v-if="profile">
     <template #body>
       <div class="grid gap-4 sm:grid-cols-3">
-        <UCard title="Số credit hiện có">
+        <UPageCard spotlight title="Số credit hiện có">
           <div class="flex flex-col items-center text-center">
             <p class="mt-2 text-4xl font-semibold text-slate-900 dark:text-white">{{ profile?.credits ?? 0 }}</p>
             <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Giá mỗi credits: {{ formatCurrency(settings?.credit_price) }} VND</p>
@@ -37,7 +37,7 @@ watch(isCustomer, async (customer) => {
               <UButton to="/dashboard/purchase" color="primary" icon="i-lucide-shopping-cart">Mua thêm</UButton>
             </div>
           </div>
-        </UCard>
+        </UPageCard>
 
         <UCard title="Liên hệ support" description="Nếu bạn cần trợ giúp về  thanh toán hoặc việc khác,
               chọn kênh phù hợp bên dưới." class="sm:col-span-2">

@@ -8,6 +8,7 @@ const schema = z.object({
   password: z.string().min(6, 'Minimum 6 characters'),
   role: z.enum(['admin', 'customer', 'employee'])
 })
+
 const open = ref(false)
 
 type Schema = z.output<typeof schema>
@@ -21,6 +22,23 @@ const state = reactive<Partial<Schema>>({
 
 const toast = useToast()
 async function onSubmit(event: FormSubmitEvent<Schema>) {
+  const data = await $fetch('/api/user/create', {
+    method: "post",
+    body: {
+      email: event.data.email,
+      password: event.data.password,
+      role: event.data.role
+    }
+  })
+  if (!data?.success) {
+    toast.add({
+      title: 'Failed',
+      description: `New user can't be created`, //TODO more descriptive
+      color: 'error'
+    })
+
+    return
+  }
   toast.add({ title: 'Success', description: `New user ${event.data.email} added`, color: 'success' })
   open.value = false
 }

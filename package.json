@@ -39,6 +39,7 @@
     "@iconify-json/lucide": "^1.2.106",
     "@iconify-json/simple-icons": "^1.2.81",
     "@types/node": "^25.8.0",
+    "prettier": "^3.8.3",
     "supabase": "^2.98.2"
   }
 }

@@ -112,10 +112,10 @@ cta:
   description: Tạo tài khoản miễn phí, chọn gói, tải tài liệu lên và nhận báo cáo AI + đạo văn - tất cả chỉ trong chưa đầy một phút.
   links:
     - label: Tạo tài khoản miễn phí
-      to: '/signup'
+      to: "/signup"
       trailingIcon: i-lucide-arrow-right
       icon: i-lucide-stars
     - label: Đăng nhập
-      to: '/login'
+      to: "/login"
       variant: subtle
       # icon: i-simple-icons-github

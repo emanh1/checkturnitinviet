@@ -1,13 +1,13 @@
 export default defineNuxtPlugin(async () => {
-  const userStore = useUser()
-  const supabase = useSupabaseClient()
-  await userStore.fetch()
+  const userStore = useUser();
+  const supabase = useSupabaseClient();
+  await userStore.fetch();
 
   supabase.auth.onAuthStateChange(async (_, session) => {
     if (session?.user) {
-      await userStore.fetch()
+      await userStore.fetch();
     } else {
-      userStore.clear()
+      userStore.clear();
     }
-  })
-})
+  });
+});

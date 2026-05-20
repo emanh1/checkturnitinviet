@@ -1,44 +1,45 @@
-import type { Database } from './database.types'
+import type { Database } from "./database.types";
 
-export type OrderRow = Database['public']['Tables']['orders']['Row']
-export type DocumentRow = Database['public']['Tables']['documents']['Row']
-export type ProfileRow = Database['public']['Tables']['profiles']['Row']
-export type ReportRow = Database['public']['Tables']['reports']['Row']
+export type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
+export type DocumentRow = Database["public"]["Tables"]["documents"]["Row"];
+export type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
+export type ReportRow = Database["public"]["Tables"]["reports"]["Row"];
 
 export type Order = OrderRow & {
-  documents: DocumentRow
-  profiles: ProfileRow
-  reports: ReportRow | null
-}
+  documents: DocumentRow;
+  profiles: ProfileRow;
+  reports: ReportRow | null;
+};
 
-export type Profile = ProfileRow
+export type Profile = ProfileRow;
 
-export type SystemSettingsRow = Database['public']['Tables']['system_settings']['Row']
-export type SystemSettings = SystemSettingsRow
+export type SystemSettingsRow =
+  Database["public"]["Tables"]["system_settings"]["Row"];
+export type SystemSettings = SystemSettingsRow;
 
 export interface ReportFileData {
-  fileName: string
-  fileSize?: number
-  pages?: number
-  wordCount?: number
+  fileName: string;
+  fileSize?: number;
+  pages?: number;
+  wordCount?: number;
 }
 
-export type Period = 'daily' | 'weekly' | 'monthly'
+export type Period = "daily" | "weekly" | "monthly";
 
 export interface Range {
-  start: Date
-  end: Date
+  start: Date;
+  end: Date;
 }
 export interface Stat {
-  title: string
-  icon: string
-  value: number | string
-  variation: number
-  formatter?: (value: number) => string
+  title: string;
+  icon: string;
+  value: number | string;
+  variation: number;
+  formatter?: (value: number) => string;
 }
 
 export interface Sale {
-  date: string
-  name: string
-  amount: string
+  date: string;
+  name: string;
+  amount: string;
 }

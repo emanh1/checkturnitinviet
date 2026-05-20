@@ -1,12 +1,12 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
-const router = useRouter()
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const router = useRouter();
 
 const logout = async () => {
-  await supabase.auth.signOut()
-  await router.push('/')
-}
+  await supabase.auth.signOut();
+  await router.push("/");
+};
 </script>
 
 <template>
@@ -83,12 +83,7 @@ const logout = async () => {
           block
           class="mb-3"
         />
-        <UButton
-          label="Đăng xuất"
-          color="neutral"
-          @click="logout"
-          block
-        />
+        <UButton label="Đăng xuất" color="neutral" @click="logout" block />
       </template>
 
       <template v-else>
@@ -100,12 +95,7 @@ const logout = async () => {
           block
           class="mb-3"
         />
-        <UButton
-          label="Đăng ký"
-          color="neutral"
-          to="/signup"
-          block
-        />
+        <UButton label="Đăng ký" color="neutral" to="/signup" block />
       </template>
     </template>
   </UHeader>

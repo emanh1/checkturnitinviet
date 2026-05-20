@@ -9,7 +9,7 @@
       class="text-primary"
     >
       <!-- Simple checkmark icon -->
-      <circle cx="20" cy="20" r="18" fill="currentColor" opacity="0.1"/>
+      <circle cx="20" cy="20" r="18" fill="currentColor" opacity="0.1" />
       <path
         d="M14 20l4 4 8-8"
         stroke="currentColor"

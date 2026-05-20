@@ -1,22 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   ssr: false,
   experimental: {
-    viteEnvironmentApi: true
+    viteEnvironmentApi: true,
   },
   modules: [
-    '@nuxt/eslint',
-    '@nuxt/image',
-    '@nuxt/scripts',
-    '@nuxt/ui',
-    '@nuxt/icon',
-    '@vueuse/nuxt',
-    '@nuxt/content',
-    '@nuxtjs/supabase'
+    "@nuxt/eslint",
+    "@nuxt/image",
+    "@nuxt/scripts",
+    "@nuxt/ui",
+    "@nuxt/icon",
+    "@vueuse/nuxt",
+    "@nuxt/content",
+    "@nuxtjs/supabase",
   ],
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
   runtimeConfig: {
     public: {
       similarityCredit: 1,
@@ -24,22 +24,24 @@ export default defineNuxtConfig({
       comboCredit: 2,
       creditPrice: 15000,
     },
-    vnpayTmnCode: '',
-    vnpayHashSecret: '',
-    vnpayReturnUrl: '',
-    vnpayNotifyUrl: ''
+    vnpayTmnCode: "",
+    vnpayHashSecret: "",
+    vnpayReturnUrl: "",
+    vnpayNotifyUrl: "",
   },
   vite: {
     optimizeDeps: {
       include: [
-        '@vue/devtools-core',
-        '@vue/devtools-kit',
-        'zod',
-        'date-fns'
-      ]
-    }
+        "@vue/devtools-core",
+        "@vue/devtools-kit",
+        "zod",
+        "date-fns",
+        "@internationalized/date",
+        "@unovis/vue",
+      ],
+    },
   },
   supabase: {
     redirect: false,
-  }
-})
+  },
+});

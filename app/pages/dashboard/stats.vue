@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { Period, Range } from '~/types'
-import { sub } from 'date-fns'
+import type { Period, Range } from "~/types";
+import { sub } from "date-fns";
 
 definePageMeta({
-  middleware: 'auth-admin',
-  layout: 'dashboard'
-})
+  middleware: "auth-admin",
+  layout: "dashboard",
+});
 
 useSeoMeta({
-  title: 'Admin Dashboard'
-})
+  title: "Admin Dashboard",
+});
 const range = shallowRef<Range>({
   start: sub(new Date(), { days: 14 }),
-  end: new Date()
-})
-const period = ref<Period>('daily')
+  end: new Date(),
+});
+const period = ref<Period>("daily");
 </script>
 
 <template>

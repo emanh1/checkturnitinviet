@@ -1,51 +1,70 @@
-import { defineCollection, z } from '@nuxt/content'
+import { defineCollection, z } from "@nuxt/content";
 
-const variantEnum = z.enum(['solid', 'outline', 'subtle', 'soft', 'ghost', 'link'])
-const colorEnum = z.enum(['primary', 'secondary', 'neutral', 'error', 'warning', 'success', 'info'])
-const sizeEnum = z.enum(['xs', 'sm', 'md', 'lg', 'xl'])
-const orientationEnum = z.enum(['vertical', 'horizontal'])
+const variantEnum = z.enum([
+  "solid",
+  "outline",
+  "subtle",
+  "soft",
+  "ghost",
+  "link",
+]);
+const colorEnum = z.enum([
+  "primary",
+  "secondary",
+  "neutral",
+  "error",
+  "warning",
+  "success",
+  "info",
+]);
+const sizeEnum = z.enum(["xs", "sm", "md", "lg", "xl"]);
+const orientationEnum = z.enum(["vertical", "horizontal"]);
 
-const createBaseSchema = () => z.object({
-  title: z.string().nonempty(),
-  description: z.string().nonempty()
-})
+const createBaseSchema = () =>
+  z.object({
+    title: z.string().nonempty(),
+    description: z.string().nonempty(),
+  });
 
-const createFeatureItemSchema = () => createBaseSchema().extend({
-  icon: z.string().nonempty().editor({ input: 'icon' })
-})
+const createFeatureItemSchema = () =>
+  createBaseSchema().extend({
+    icon: z.string().nonempty().editor({ input: "icon" }),
+  });
 
-const createLinkSchema = () => z.object({
-  label: z.string().nonempty(),
-  to: z.string().nonempty(),
-  icon: z.string().optional().editor({ input: 'icon' }),
-  size: sizeEnum.optional(),
-  trailing: z.boolean().optional(),
-  target: z.string().optional(),
-  color: colorEnum.optional(),
-  variant: variantEnum.optional()
-})
+const createLinkSchema = () =>
+  z.object({
+    label: z.string().nonempty(),
+    to: z.string().nonempty(),
+    icon: z.string().optional().editor({ input: "icon" }),
+    size: sizeEnum.optional(),
+    trailing: z.boolean().optional(),
+    target: z.string().optional(),
+    color: colorEnum.optional(),
+    variant: variantEnum.optional(),
+  });
 
-const createImageSchema = () => z.object({
-  src: z.string().nonempty().editor({ input: 'media' }),
-  alt: z.string().optional(),
-  loading: z.enum(['lazy', 'eager']).optional(),
-  srcset: z.string().optional()
-})
+const createImageSchema = () =>
+  z.object({
+    src: z.string().nonempty().editor({ input: "media" }),
+    alt: z.string().optional(),
+    loading: z.enum(["lazy", "eager"]).optional(),
+    srcset: z.string().optional(),
+  });
 
 export const collections = {
   index: defineCollection({
-    source: 'index.yml',
-    type: 'page',
+    source: "index.yml",
+    type: "page",
     schema: z.object({
-      hero: z.object(({
-        links: z.array(createLinkSchema())
-      })),
+      hero: z.object({
+        links: z.array(createLinkSchema()),
+      }),
       process: createBaseSchema().extend({
         steps: z.array(
           createBaseSchema().extend({
-            icon: z.string().nonempty().editor({ input: 'icon' })
-          })
-        )
+            icon: z.string().nonempty().editor({ input: "icon" }),
+          }),
+        ),
       }),
       report_preview: createBaseSchema().extend({
         ai_score: z.number(),
@@ -55,20 +74,20 @@ export const collections = {
           file_name: z.string().nonempty(),
           file_size: z.number(),
           pages: z.number(),
-          word_count: z.number()
-        })
+          word_count: z.number(),
+        }),
       }),
       comparison: createBaseSchema().extend({
         competitors: z.string().nonempty(),
-        features: z.array(createFeatureItemSchema())
+        features: z.array(createFeatureItemSchema()),
       }),
       sections: z.array(
         createBaseSchema().extend({
           id: z.string().nonempty(),
           orientation: orientationEnum.optional(),
           reverse: z.boolean().optional(),
-          features: z.array(createFeatureItemSchema())
-        })
+          features: z.array(createFeatureItemSchema()),
+        }),
       ),
       testimonials: createBaseSchema().extend({
         headline: z.string().optional(),
@@ -80,23 +99,23 @@ export const collections = {
               description: z.string().nonempty(),
               to: z.string().nonempty(),
               target: z.string().nonempty(),
-              avatar: createImageSchema()
-            })
-          })
-        )
+              avatar: createImageSchema(),
+            }),
+          }),
+        ),
       }),
       faq: createBaseSchema().extend({
         items: z.array(
           z.object({
             label: z.string().nonempty(),
             content: z.string().nonempty(),
-            icon: z.string().nonempty().editor({ input: 'icon' })
-          })
-        )
+            icon: z.string().nonempty().editor({ input: "icon" }),
+          }),
+        ),
       }),
       cta: createBaseSchema().extend({
-        links: z.array(createLinkSchema())
-      })
-    })
+        links: z.array(createLinkSchema()),
+      }),
+    }),
   }),
-}
+};

@@ -1,14 +1,14 @@
-import { serverSupabaseUser } from "#supabase/server"
-import { z } from "zod"
+import { serverSupabaseUser } from "#supabase/server";
+import { z } from "zod";
 
 export default eventHandler(async (event) => {
-  const user = await serverSupabaseUser(event)
+  const user = await serverSupabaseUser(event);
 
   if (!user) {
     throw createError({
       statusCode: 401,
-      message: 'Unauthorized'
-    })
+      message: "Unauthorized",
+    });
   }
 
   const { transactionId } = await getValidatedQuery(
@@ -18,24 +18,24 @@ export default eventHandler(async (event) => {
         .string()
         .min(1)
         .max(100)
-        .regex(/^[a-zA-Z0-9_-]+$/, 'Invalid transaction ID')
-    }).parse
-  )
+        .regex(/^[a-zA-Z0-9_-]+$/, "Invalid transaction ID"),
+    }).parse,
+  );
 
-  const supabase = useSupabaseClient()
+  const supabase = useSupabaseClient();
 
   const { data: payment, error } = await supabase
-    .from('payments')
-    .select('*')
-    .eq('transaction_id', transactionId)
-    .eq('user_id', user.id)
-    .single()
+    .from("payments")
+    .select("*")
+    .eq("transaction_id", transactionId)
+    .eq("user_id", user.id)
+    .single();
 
   if (error || !payment) {
     throw createError({
       statusCode: 404,
-      message: 'Payment not found'
-    })
+      message: "Payment not found",
+    });
   }
 
   return {
@@ -43,6 +43,6 @@ export default eventHandler(async (event) => {
     status: payment.status,
     amount: payment.amount,
     creditsAdded: payment.credits_added,
-    createdAt: payment.created_at
-  }
-})
+    createdAt: payment.created_at,
+  };
+});

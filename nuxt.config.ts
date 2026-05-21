@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     "@vueuse/nuxt",
     "@nuxt/content",
     "@nuxtjs/supabase",
+    "@pinia/nuxt",
   ],
   css: ["~/assets/css/main.css"],
   runtimeConfig: {

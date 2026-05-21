@@ -14,6 +14,7 @@ const emit = defineEmits<{
   (e: "assign", order: Order): void;
   (e: "download-document", order: Order): void;
   (e: "submit-report", order: Order): void;
+  (e: "view", order: Order): void;
 }>();
 
 const UBadge = resolveComponent("UBadge");
@@ -55,11 +56,7 @@ const columns = computed<TableColumn<Order>[]>(() => {
         );
       },
     },
-    {
-      id: "size",
-      header: "Size",
-      cell: ({ row }) => formatBytes(row.original.documents.file_size),
-    },
+
   ];
 
   if (props.userRole !== "customer") {
@@ -78,12 +75,15 @@ const columns = computed<TableColumn<Order>[]>(() => {
     },
     {
       id: "similarity",
-      header: "Similarity",
+      header: "Đạo văn",
       cell: ({ row }) => `${row.original.reports?.similarity_score ?? "-"}%`,
     },
-  );
-
-  cols.push(
+    {
+      id: "notes",
+      header: "Notes",
+      cell: ({ row }) =>
+        row.original.reports?.details?.notes ?? "-"
+    },
     {
       id: "date",
       header: "Time added",
@@ -92,10 +92,18 @@ const columns = computed<TableColumn<Order>[]>(() => {
           row.original.created_at || row.original.documents.uploaded_at,
         ),
     },
+    {
+      id: "date-updated",
+      header: "Time updated",
+      cell: ({ row }) =>
+        formatDateTime(
+          row.original.updated_at || row.original.documents.uploaded_at,
+        ),
+    },
 
     {
       id: "status",
-      header: "Status",
+      header: "Trạng thái",
 
       cell: ({ row }) => {
         const status = row.original.status || "pending";
@@ -118,7 +126,11 @@ const columns = computed<TableColumn<Order>[]>(() => {
         );
       },
     },
-
+    {
+      id: "size",
+      header: "Kích cỡ",
+      cell: ({ row }) => formatBytes(row.original.documents.file_size),
+    },
     {
       id: "actions",
       header: "",
@@ -139,7 +151,7 @@ const columns = computed<TableColumn<Order>[]>(() => {
                   variant: "outline",
                   onClick: () => emit("assign", order),
                 },
-                () => "Nhận",
+                () => "Nhận đơn",
               ),
             );
           }
@@ -192,18 +204,14 @@ const columns = computed<TableColumn<Order>[]>(() => {
 </script>
 
 <template>
-  <UTable
-    :data="orders"
-    :columns="columns"
-    class="shrink-0"
-    :ui="{
-      base: 'table-fixed border-separate border-spacing-0',
-      thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-      tbody: '[&>tr]:last:[&>td]:border-b-0',
-      th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-      td: 'border-b border-default',
-    }"
-  >
+  <UTable :data="orders" :columns="columns" class="shrink-0" :ui="{
+    base: 'table-fixed border-separate border-spacing-0',
+    thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+    tbody: '[&>tr]:last:[&>td]:border-b-0',
+    th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+    tr: 'cursor-pointer hover:bg-elevated/50 transition',
+    td: 'border-b border-default',
+  }" @select="(event, row) => emit('view', row.original)">
     <template #empty>
       <div class="py-8 text-center text-muted">
         <slot name="empty-state"> Không có dữ liệu. </slot>

@@ -70,20 +70,18 @@ const columns = computed<TableColumn<Order>[]>(() => {
     });
   }
 
-  if (props.userRole === "customer") {
-    cols.push(
-      {
-        id: "ai",
-        header: "AI",
-        cell: ({ row }) => `${row.original.reports?.ai_score ?? "-"}%`,
-      },
-      {
-        id: "similarity",
-        header: "Similarity",
-        cell: ({ row }) => `${row.original.reports?.similarity_score ?? "-"}%`,
-      },
-    );
-  }
+  cols.push(
+    {
+      id: "ai",
+      header: "AI",
+      cell: ({ row }) => `${row.original.reports?.ai_score ?? "-"}%`,
+    },
+    {
+      id: "similarity",
+      header: "Similarity",
+      cell: ({ row }) => `${row.original.reports?.similarity_score ?? "-"}%`,
+    },
+  );
 
   cols.push(
     {
@@ -194,18 +192,13 @@ const columns = computed<TableColumn<Order>[]>(() => {
 </script>
 
 <template>
-  <UTable
-    :data="orders"
-    :columns="columns"
-    class="shrink-0"
-    :ui="{
-      base: 'table-fixed border-separate border-spacing-0',
-      thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
-      tbody: '[&>tr]:last:[&>td]:border-b-0',
-      th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
-      td: 'border-b border-default',
-    }"
-  >
+  <UTable :data="orders" :columns="columns" class="shrink-0" :ui="{
+    base: 'table-fixed border-separate border-spacing-0',
+    thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+    tbody: '[&>tr]:last:[&>td]:border-b-0',
+    th: 'first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+    td: 'border-b border-default',
+  }">
     <template #empty>
       <div class="py-8 text-center text-muted">
         <slot name="empty-state"> Không có dữ liệu. </slot>

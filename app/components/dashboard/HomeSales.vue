@@ -8,7 +8,8 @@ const props = defineProps<{
   range: Range;
 }>();
 
-const { data } = await useFetch("/api/payments/list", {
+const { data } = useFetch("/api/payments/list", {
+  lazy: true,
   query: computed(() => ({
     start: props.range.start.toISOString(),
     end: props.range.end.toISOString(),

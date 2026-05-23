@@ -14,7 +14,8 @@ function formatCurrency(value: number): string {
   });
 }
 
-const { data } = await useFetch("/api/stats", {
+const { data } = useFetch("/api/stats", {
+  lazy: true,
   query: computed(() => ({
     start: props.range.start.toISOString(),
     end: props.range.end.toISOString(),

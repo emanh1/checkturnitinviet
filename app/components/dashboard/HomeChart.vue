@@ -32,7 +32,8 @@ type DataRecord = {
 
 const { width } = useElementSize(cardRef);
 
-const { data: payments } = await useFetch("/api/revenue", {
+const { data: payments } = useFetch("/api/revenue", {
+  lazy: true,
   query: computed(() => ({
     start: props.range.start.toISOString(),
     end: props.range.end.toISOString(),

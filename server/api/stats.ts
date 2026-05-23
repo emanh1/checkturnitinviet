@@ -6,7 +6,7 @@ import {
 import { calcVariation, getPreviousRange } from "../utils";
 import { z } from "zod";
 
-export default eventHandler(async (event) => {
+export default cachedEventHandler(async (event) => {
   const user = await serverSupabaseUser(event);
 
   if (!user) {
@@ -138,4 +138,4 @@ export default eventHandler(async (event) => {
       variation: calcVariation(currentProcessed, previousProcessed),
     },
   };
-});
+}, { maxAge: 60 * 30 });

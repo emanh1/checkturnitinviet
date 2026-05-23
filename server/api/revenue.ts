@@ -5,7 +5,7 @@ import {
 } from "#supabase/server";
 import { z } from "zod";
 
-export default eventHandler(async (event) => {
+export default cachedEventHandler(async (event) => {
   const user = await serverSupabaseUser(event);
 
   if (!user) {
@@ -66,4 +66,4 @@ export default eventHandler(async (event) => {
   })) || [];
 
   return mappedData;
-});
+}, { maxAge: 60 * 30} );

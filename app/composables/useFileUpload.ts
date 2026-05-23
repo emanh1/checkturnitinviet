@@ -46,8 +46,6 @@ export const useFileUpload = () => {
 
     const filePath = `${profile.value.id}/${fileName}`;
 
-    let documentId: string | null = null;
-    let creditsDeducted = false;
 
     try {
       if (profile.value.credits! < creditsRequired) {
@@ -62,80 +60,25 @@ export const useFileUpload = () => {
 
       if (uploadError) throw new Error(uploadError.message);
 
-      // create document
-      const { data: document, error: documentError } = await supabase
-        .from("documents")
-        .insert({
-          user_id: profile.value.id,
-          original_filename: file.name,
-          stored_filename: fileName,
-          file_path: filePath,
-          file_size: file.size,
-          mime_type: file.type,
-        })
-        .select()
-        .single();
-
-      if (documentError) {
-        throw documentError;
-      }
-
-      documentId = document.id;
-
-      const { data: success, error: creditError } = await supabase.rpc(
-        "deduct_credits",
+      // create document and order securely in one transaction
+      const { data: order, error: rpcError } = await supabase.rpc(
+        "create_order_securely",
         {
-          p_user_id: profile.value.id,
-          p_amount: creditsRequired,
-        },
+          p_file_name: file.name,
+          p_file_path: filePath,
+          p_file_size: file.size,
+          p_mime_type: file.type,
+          p_check_type: checkType,
+        }
       );
 
-      if (creditError) {
-        throw new Error(creditError.message);
-      }
-
-      if (!success) {
-        throw new Error("Không đủ credits");
-      }
-
-      creditsDeducted = true;
-
-      // create order
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          user_id: profile.value.id,
-          document_id: document.id,
-          check_type: checkType,
-          status: "pending",
-        })
-        .select()
-        .single();
-
-      if (orderError) {
-        throw orderError;
+      if (rpcError) {
+        throw new Error(rpcError.message);
       }
 
       return order;
     } catch (error) {
-      // restore credits
-      if (creditsDeducted) {
-        try {
-          await supabase.rpc("restore_credits", {
-            p_user_id: profile.value.id,
-            p_amount: creditsRequired,
-          });
-        } catch {}
-      }
-
-      // cleanup document row
-      if (documentId) {
-        try {
-          await supabase.from("documents").delete().eq("id", documentId);
-        } catch {}
-      }
-
-      // cleanup file
+      // cleanup file from storage if the DB transaction fails
       try {
         await supabase.storage.from("documents").remove([filePath]);
       } catch {}

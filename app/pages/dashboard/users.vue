@@ -27,7 +27,8 @@ const fetchUsers = async () => {
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(200);
 
     if (error) throw error;
     users.value = data as Profile[];

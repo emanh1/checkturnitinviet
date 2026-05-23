@@ -30,7 +30,7 @@ export const useOrdersStore = defineStore("orders", () => {
 
       const { data, error } = await query.order("created_at", {
         ascending: false,
-      });
+      }).limit(200);
 
       if (error) throw error;
       orders.value = (data as unknown as Order[]) || [];
@@ -120,6 +120,35 @@ export const useOrdersStore = defineStore("orders", () => {
 
     const role = profile.value?.role;
 
+    const fetchSingleOrder = async (id: string) => {
+      let query;
+      if (profile.value?.role === "customer") {
+        query = supabase
+          .from("orders")
+          .select(`*, documents(*), reports(*)`)
+          .eq("id", id);
+      } else {
+        query = supabase
+          .from("orders")
+          .select(
+            `*, documents(*), customer:profiles!orders_user_id_fkey(*), assignee:profiles!orders_assigned_to_fkey(*), reports(*)`,
+          )
+          .eq("id", id);
+      }
+      const { data } = await query.single();
+      return data as Order | null;
+    };
+
+    const updateLocalOrder = (updatedOrder: Order | null) => {
+      if (!updatedOrder) return;
+      const idx = orders.value.findIndex((o) => o.id === updatedOrder.id);
+      if (idx !== -1) {
+        orders.value[idx] = updatedOrder;
+      } else {
+        orders.value.unshift(updatedOrder);
+      }
+    };
+
     const channelName = `orders-${profile.value?.id ?? "anon"}-${Date.now()}`;
     const channel = supabase.channel(channelName);
 
@@ -131,6 +160,15 @@ export const useOrdersStore = defineStore("orders", () => {
         table: "orders",
       },
       async (payload: any) => {
+        const orderId = payload.new?.id || payload.old?.id;
+        if (!orderId) return;
+
+        if (payload.eventType === "DELETE") {
+          orders.value = orders.value.filter((o) => o.id !== orderId);
+          return;
+        }
+
+        const updatedOrder = await fetchSingleOrder(orderId);
         // Customer logic
         if (role === "customer") {
           if (payload.new?.user_id !== profile.value!.id && payload.old?.user_id !== profile.value!.id) {
@@ -149,7 +187,7 @@ export const useOrdersStore = defineStore("orders", () => {
             }
           }
 
-          await fetchOrders();
+          updateLocalOrder(updatedOrder);
 
           if (didStatusChange) {
             const updatedOrder = orders.value.find((o) => o.id === payload.new.id);
@@ -179,7 +217,7 @@ export const useOrdersStore = defineStore("orders", () => {
           const isNewUnassigned = payload.eventType === "INSERT" && payload.new?.assigned_to === null;
           
           if (isAssignedToMe || isNewUnassigned) {
-            await fetchOrders();
+            updateLocalOrder(updatedOrder);
             
             if (isNewUnassigned) {
               const newOrder = orders.value.find((o) => o.id === payload.new.id);
@@ -198,7 +236,7 @@ export const useOrdersStore = defineStore("orders", () => {
 
         // Admin logic
         if (role === "admin") {
-          await fetchOrders();
+          updateLocalOrder(updatedOrder);
         }
       }
     );
@@ -210,8 +248,12 @@ export const useOrdersStore = defineStore("orders", () => {
         schema: "public",
         table: "reports",
       },
-      async () => {
-        await fetchOrders();
+      async (payload: any) => {
+        const orderId = payload.new?.order_id || payload.old?.order_id;
+        if (orderId) {
+          const updatedOrder = await fetchSingleOrder(orderId);
+          updateLocalOrder(updatedOrder);
+        }
       },
     );
 

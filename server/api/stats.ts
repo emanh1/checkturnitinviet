@@ -77,14 +77,11 @@ export default eventHandler(async (event) => {
   }
 
   async function revenue(from: Date, to: Date) {
-    const { data } = await supabase
-      .from("payments")
-      .select("amount")
-      .eq("status", "completed")
-      .gte("created_at", from.toISOString())
-      .lte("created_at", to.toISOString());
-
-    return data?.reduce((sum, p) => sum + p.amount, 0) || 0;
+    const { data } = await supabase.rpc("get_revenue_sum", {
+      start_date: from.toISOString(),
+      end_date: to.toISOString(),
+    });
+    return Number(data) || 0;
   }
 
   const [

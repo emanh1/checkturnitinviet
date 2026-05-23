@@ -51,20 +51,16 @@ const data = computed<DataRecord[]>(() => {
   )[props.period](props.range);
 
   return dates.map((date) => {
-    let amount = 0;
-
-    for (const p of payments.value || []) {
+    const payment = (payments.value || []).find((p) => {
       const paymentDate = new Date(p.created_at);
+      return props.period === "daily"
+        ? isSameDay(paymentDate, date)
+        : props.period === "weekly"
+          ? isSameDay(startOfWeek(paymentDate), startOfWeek(date))
+          : isSameDay(startOfMonth(paymentDate), startOfMonth(date));
+    });
 
-      const same =
-        props.period === "daily"
-          ? isSameDay(paymentDate, date)
-          : props.period === "weekly"
-            ? isSameDay(startOfWeek(paymentDate), startOfWeek(date))
-            : isSameDay(startOfMonth(paymentDate), startOfMonth(date));
-
-      if (same) amount += p.amount;
-    }
+    const amount = payment ? payment.amount : 0;
 
     return {
       date,

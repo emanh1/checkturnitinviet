@@ -36,12 +36,11 @@ export default eventHandler(async (event) => {
     }).parse,
   );
 
-  const { data, error: erro2 } = await supabase
-    .from("payments")
-    .select("amount, created_at")
-    .eq("status", "completed")
-    .gte("created_at", query.start)
-    .lte("created_at", query.end);
+  const { data, error: erro2 } = await supabase.rpc("get_revenue_by_period", {
+    start_date: query.start,
+    end_date: query.end,
+    p_period: query.period,
+  });
 
   if (erro2) {
     throw createError({
@@ -50,5 +49,11 @@ export default eventHandler(async (event) => {
     });
   }
 
-  return data;
+  // Map RPC results to the expected format { amount, created_at }
+  const mappedData = data?.map((row: any) => ({
+    amount: Number(row.total_amount),
+    created_at: row.period_date,
+  })) || [];
+
+  return mappedData;
 });

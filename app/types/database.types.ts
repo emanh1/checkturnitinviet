@@ -304,6 +304,17 @@ export type Database = {
         }
         Returns: Json
       }
+      get_revenue_by_period: {
+        Args: { end_date: string; p_period: string; start_date: string }
+        Returns: {
+          period_date: string
+          total_amount: number
+        }[]
+      }
+      get_revenue_sum: {
+        Args: { end_date: string; start_date: string }
+        Returns: number
+      }
       is_admin: { Args: never; Returns: boolean }
       is_employee: { Args: never; Returns: boolean }
     }

@@ -1,4 +1,4 @@
-import { serverSupabaseUser } from "#supabase/server";
+import { serverSupabaseUser, serverSupabaseClient } from "#supabase/server";
 import { z } from "zod";
 
 export default eventHandler(async (event) => {
@@ -22,7 +22,7 @@ export default eventHandler(async (event) => {
     }).parse,
   );
 
-  const supabase = useSupabaseClient();
+  const supabase = await serverSupabaseClient(event);
 
   const { data: payment, error } = await supabase
     .from("payments")

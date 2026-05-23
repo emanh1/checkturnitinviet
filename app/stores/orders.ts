@@ -5,6 +5,7 @@ export const useOrdersStore = defineStore("orders", () => {
   const supabase = useSupabaseClient();
   const { profile } = useUser();
   const toast = useToast();
+  const { playSound } = useNotificationSound();
 
   const orders = ref<Order[]>([]);
   const loading = ref(false);
@@ -136,25 +137,40 @@ export const useOrdersStore = defineStore("orders", () => {
             return; // Not my order
           }
           
+          let didStatusChange = false;
+          let newStatus = '';
+          
           if (payload.eventType === "UPDATE") {
-            const oldOrder = orders.value.find((o) => o.id === payload.new.id);
-            if (oldOrder && oldOrder.status !== payload.new.status) {
-              if (payload.new.status === "completed") {
-                toast.add({
-                  title: "Đơn hàng hoàn tất",
-                  description: "Tài liệu của bạn đã được kiểm tra xong.",
-                  color: "success",
-                });
-              } else if (payload.new.status === "processing") {
-                toast.add({
-                  title: "Đang xử lý",
-                  description: "Đơn hàng của bạn đang được nhân viên xử lý.",
-                  color: "info",
-                });
-              }
+            // Because of race conditions with the `reports` subscription (which might call fetchOrders early), 
+            // we reliably check the payload itself instead of the local store.
+            if (payload.old?.status && payload.old.status !== payload.new.status) {
+              didStatusChange = true;
+              newStatus = payload.new.status;
             }
           }
+
           await fetchOrders();
+
+          if (didStatusChange) {
+            const updatedOrder = orders.value.find((o) => o.id === payload.new.id);
+            const fileName = updatedOrder?.documents?.original_filename ?? 'Tài liệu';
+            
+            playSound();
+            
+            if (newStatus === "completed") {
+              toast.add({
+                title: "Đơn hàng hoàn tất",
+                description: `${fileName} đã được kiểm tra xong.`,
+                color: "success",
+              });
+            } else if (newStatus === "processing") {
+              toast.add({
+                title: "Đang xử lý",
+                description: `${fileName} đang được nhân viên xử lý.`,
+                color: "info",
+              });
+            }
+          }
         }
 
         // Employee logic
@@ -166,9 +182,15 @@ export const useOrdersStore = defineStore("orders", () => {
             await fetchOrders();
             
             if (isNewUnassigned) {
+              const newOrder = orders.value.find((o) => o.id === payload.new.id);
+              const fileName = newOrder?.documents?.original_filename ?? 'Tài liệu mới';
+              const typeMap: Record<string, string> = { ai: 'AI', similarity: 'Đạo văn', combo: 'Combo' };
+              const typeLabel = newOrder?.check_type ? typeMap[newOrder.check_type] : '';
+              
+              playSound();
               toast.add({
                 title: "Đơn mới",
-                description: "Có đơn mới chưa được nhận",
+                description: `${fileName} ${typeLabel ? `(${typeLabel})` : ''} cần được xử lý`,
               });
             }
           }

@@ -20,7 +20,7 @@ export const useOrdersStore = defineStore("orders", () => {
     status: "all",
     checkType: "all",
   });
-  const debouncedFileName = refDebounced(() => filters.value.fileName, 500);
+  const debouncedFileName = refDebounced(computed(() => filters.value.fileName), 500);
 
   watch([debouncedFileName, () => filters.value.status, () => filters.value.checkType, () => pagination.value.pageSize], () => {
     pagination.value.pageIndex = 0;

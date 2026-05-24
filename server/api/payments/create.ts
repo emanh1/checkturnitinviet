@@ -1,4 +1,4 @@
-import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import { serverSupabaseClient, serverSupabaseUser, serverSupabaseServiceRole } from "#supabase/server";
 import crypto from "crypto";
 import { z } from "zod";
 import type { H3Event } from "h3";
@@ -8,10 +8,20 @@ function getClientIP(event: H3Event): string {
   if (forwarded) {
     // @ts-ignore
     return typeof forwarded === "string"
-      ? forwarded.split(",")[0]
-      : forwarded[0];
+      ? (forwarded.split(",")[0] || "127.0.0.1")
+      : (forwarded[0] || "127.0.0.1");
   }
   return event.node.req.socket.remoteAddress || "127.0.0.1";
+}
+
+function formatDate(date: Date): string {
+  const yyyy = date.getFullYear().toString();
+  const MM = (date.getMonth() + 1).toString().padStart(2, "0");
+  const dd = date.getDate().toString().padStart(2, "0");
+  const HH = date.getHours().toString().padStart(2, "0");
+  const mm = date.getMinutes().toString().padStart(2, "0");
+  const ss = date.getSeconds().toString().padStart(2, "0");
+  return `${yyyy}${MM}${dd}${HH}${mm}${ss}`;
 }
 
 export default eventHandler(async (event) => {
@@ -24,10 +34,11 @@ export default eventHandler(async (event) => {
     });
   }
 
-  const { creditPackage } = await readValidatedBody(
+  const { creditPackage, promoCode } = await readValidatedBody(
     event,
     z.object({
       creditPackage: z.number().gt(0),
+      promoCode: z.string().toUpperCase().optional(),
     }).parse,
   );
 
@@ -51,7 +62,28 @@ export default eventHandler(async (event) => {
     .single();
   const creditPrice = settings?.credit_price || 15000;
 
-  const amount = creditPackage * creditPrice * 100; // TODO: check if vnpay actually uses cents
+  let finalAmount = creditPackage * creditPrice;
+  let finalCredits = creditPackage;
+
+  if (promoCode) {
+    const { data: promo } = await supabase
+      .from("promo_codes")
+      .select("*")
+      .eq("code", promoCode)
+      .eq("active", true)
+      .single();
+
+    if (promo && (!promo.expires_at || new Date(promo.expires_at) > new Date())) {
+      if (promo.discount_percentage) {
+        finalAmount = Math.floor(finalAmount * (1 - promo.discount_percentage / 100));
+      }
+      if (promo.bonus_credits) {
+        finalCredits += promo.bonus_credits;
+      }
+    }
+  }
+
+  const amount = finalAmount * 100; // VNPay amount is multiplied by 100
 
   const transactionId = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
@@ -59,12 +91,12 @@ export default eventHandler(async (event) => {
     .from("payments")
     .insert({
       user_id: user.id,
-      amount: creditPackage * creditPrice,
+      amount: finalAmount,
       currency: "VND",
       method: "vnpay",
       status: "pending",
       transaction_id: transactionId,
-      credits_added: creditPackage,
+      credits_added: finalCredits,
     })
     .select()
     .single();

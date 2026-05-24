@@ -218,6 +218,42 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_codes: {
+        Row: {
+          active: boolean
+          banner_message: string | null
+          bonus_credits: number | null
+          code: string
+          created_at: string
+          discount_percentage: number | null
+          expires_at: string | null
+          id: string
+          show_banner: boolean
+        }
+        Insert: {
+          active?: boolean
+          banner_message?: string | null
+          bonus_credits?: number | null
+          code: string
+          created_at?: string
+          discount_percentage?: number | null
+          expires_at?: string | null
+          id?: string
+          show_banner?: boolean
+        }
+        Update: {
+          active?: boolean
+          banner_message?: string | null
+          bonus_credits?: number | null
+          code?: string
+          created_at?: string
+          discount_percentage?: number | null
+          expires_at?: string | null
+          id?: string
+          show_banner?: boolean
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           ai_score: number | null
@@ -317,6 +353,15 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_employee: { Args: never; Returns: boolean }
+      process_vnpay_success: {
+        Args: {
+          p_bank_code: string
+          p_expected_amount: number
+          p_transaction_id: string
+          p_transaction_no: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

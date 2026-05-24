@@ -81,6 +81,11 @@ const items = computed<NavigationMenuItem[]>(() => [
               to: "/dashboard/users",
             },
             {
+              label: "Khuyến mãi",
+              icon: "i-lucide-tag",
+              to: "/dashboard/promos",
+            },
+            {
               label: "Thống kê",
               icon: "i-lucide-shield-check",
               to: "/dashboard/stats",
@@ -124,10 +129,31 @@ const groups = computed(() => [
     ],
   },
 ]);
+const { data: promoData } = useAsyncData('active-promo', () => $fetch('/api/promo/active'));
+const dismissedPromos = useCookie<string[]>('dismissed_promos', { default: () => [] });
+
+const activePromo = computed(() => {
+  if (!promoData.value) return null;
+  if (dismissedPromos.value.includes(promoData.value.code)) return null;
+  return promoData.value;
+});
+
+const closePromoBanner = () => {
+  if (promoData.value) {
+    dismissedPromos.value.push(promoData.value.code);
+  }
+};
 </script>
 
 <template>
   <AppAnnouncement />
+  <UBanner
+    v-if="activePromo"
+    icon="i-lucide-tag"
+    :title="activePromo.banner_message"
+    :actions="[{ label: 'Dùng mã ngay', to: '/dashboard/purchase', color: 'primary' }]"
+    @close="closePromoBanner"
+  />
   <UDashboardGroup unit="rem">
     <UDashboardSidebar
       id="dashboard"

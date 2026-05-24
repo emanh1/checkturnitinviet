@@ -24,42 +24,72 @@ const creditPrice = computed(() => settings.value?.credit_price || 15000);
 
 const totalPrice = computed(() => customCredits.value * creditPrice.value);
 
-const tiers = ref<PricingTableTier[]>([
-  {
-    id: "starter",
-    title: "Starter",
-    description: "Phù hợp dùng thử",
-    price: formatCurrency(10 * creditPrice.value) + "đ",
-    badge: "",
-    button: {
-      label: "Mua ngay",
-      variant: "subtle",
-      onClick: () => buyCredits(10),
+const promoCode = ref("");
+const appliedPromo = ref<{ valid: boolean; discountPercentage?: number; bonusCredits?: number; message?: string } | null>(null);
+const isValidatingPromo = ref(false);
+
+const applyPromoCode = async () => {
+  if (!promoCode.value) {
+    appliedPromo.value = null;
+    return;
+  }
+  
+  isValidatingPromo.value = true;
+  try {
+    const res = await $fetch("/api/promo/validate", {
+      method: "POST",
+      body: { code: promoCode.value }
+    });
+    appliedPromo.value = res;
+  } catch (e) {
+    appliedPromo.value = { valid: false, message: "Lỗi kiểm tra mã khuyến mãi" };
+  } finally {
+    isValidatingPromo.value = false;
+  }
+};
+
+const tiers = computed<PricingTableTier[]>(() => {
+  const discount = appliedPromo.value?.valid && appliedPromo.value.discountPercentage ? appliedPromo.value.discountPercentage : 0;
+  const bonus = appliedPromo.value?.valid && appliedPromo.value.bonusCredits ? appliedPromo.value.bonusCredits : 0;
+
+  return [
+    {
+      id: "starter",
+      title: "Starter",
+      description: bonus ? `Tặng thêm ${bonus} credits` : "Phù hợp dùng thử",
+      price: formatCurrency(10 * creditPrice.value * (1 - discount / 100)) + "đ",
+      badge: discount ? `Giảm ${discount}%` : "",
+      button: {
+        label: "Mua ngay",
+        variant: "subtle",
+        onClick: () => buyCredits(10),
+      },
     },
-  },
-  {
-    id: "popular",
-    title: "Popular",
-    description: "Phổ biến nhất",
-    price: formatCurrency(50 * creditPrice.value) + "đ",
-    badge: "Best value",
-    highlight: true,
-    button: {
-      label: "Mua ngay",
-      onClick: () => buyCredits(50),
+    {
+      id: "popular",
+      title: "Popular",
+      description: bonus ? `Tặng thêm ${bonus} credits` : "Phổ biến nhất",
+      price: formatCurrency(50 * creditPrice.value * (1 - discount / 100)) + "đ",
+      badge: discount ? `Giảm ${discount}%` : "Best value",
+      highlight: true,
+      button: {
+        label: "Mua ngay",
+        onClick: () => buyCredits(50),
+      },
     },
-  },
-  {
-    id: "pro",
-    title: "Pro",
-    description: "Dành cho người dùng thường xuyên",
-    price: formatCurrency(100 * creditPrice.value) + "đ",
-    button: {
-      label: "Mua ngay",
-      onClick: () => buyCredits(100),
+    {
+      id: "pro",
+      title: "Pro",
+      description: bonus ? `Tặng thêm ${bonus} credits` : "Dành cho người dùng thường xuyên",
+      price: formatCurrency(100 * creditPrice.value * (1 - discount / 100)) + "đ",
+      badge: discount ? `Giảm ${discount}%` : "",
+      button: {
+        label: "Mua ngay",
+        onClick: () => buyCredits(100),
+      },
     },
-  },
-]);
+  ];
+});
 
 const sections = ref<PricingTableSection[]>([
   {
@@ -98,7 +128,8 @@ const sections = ref<PricingTableSection[]>([
 
 const buyCredits = async (credits: number) => {
   if (credits < 1) return;
-  await initiatePayment(credits);
+  const activeCode = appliedPromo.value?.valid ? promoCode.value : undefined;
+  await initiatePayment(credits, activeCode);
 };
 </script>
 
@@ -154,6 +185,25 @@ const buyCredits = async (credits: number) => {
           </div>
         </div>
 
+        <!-- PROMO CODE -->
+        <div class="max-w-md mx-auto w-full">
+          <UCard>
+            <div class="flex gap-2">
+              <UInput v-model="promoCode" placeholder="Nhập mã khuyến mãi..." class="flex-1" :disabled="isValidatingPromo" @keyup.enter="applyPromoCode" />
+              <UButton :loading="isValidatingPromo" @click="applyPromoCode" color="gray">Áp dụng</UButton>
+            </div>
+            <div v-if="appliedPromo" class="mt-3 text-sm">
+              <span v-if="appliedPromo.valid" class="text-success font-medium">
+                Đã áp dụng mã thành công! 
+                <span v-if="appliedPromo.discountPercentage">Giảm {{ appliedPromo.discountPercentage }}%</span>
+                <span v-if="appliedPromo.discountPercentage && appliedPromo.bonusCredits">, </span>
+                <span v-if="appliedPromo.bonusCredits">Tặng thêm {{ appliedPromo.bonusCredits }} credits</span>
+              </span>
+              <span v-else class="text-error font-medium">{{ appliedPromo.message }}</span>
+            </div>
+          </UCard>
+        </div>
+
         <!-- PACKAGES -->
 
         <div class="space-y-4">
@@ -187,15 +237,23 @@ const buyCredits = async (credits: number) => {
 
                 <span class="font-semibold">
                   {{ customCredits }}
+                  <span v-if="appliedPromo?.valid && appliedPromo.bonusCredits" class="text-success ml-1">
+                    + {{ appliedPromo.bonusCredits }} bonus
+                  </span>
                 </span>
               </div>
 
               <div class="flex justify-between mt-3">
                 <span>Tổng tiền</span>
 
-                <span class="font-bold text-primary text-xl">
-                  {{ totalPrice.toLocaleString("vi-VN") }}đ
-                </span>
+                <div class="text-right">
+                  <div v-if="appliedPromo?.valid && appliedPromo.discountPercentage" class="text-sm text-muted line-through">
+                    {{ totalPrice.toLocaleString("vi-VN") }}đ
+                  </div>
+                  <span class="font-bold text-primary text-xl">
+                    {{ (totalPrice * (1 - (appliedPromo?.discountPercentage || 0) / 100)).toLocaleString("vi-VN") }}đ
+                  </span>
+                </div>
               </div>
 
               <div class="mt-4 text-sm text-muted">

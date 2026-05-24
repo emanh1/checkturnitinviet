@@ -2,13 +2,13 @@ export const usePayments = () => {
   const toast = useToast();
   const isLoading = ref(false);
 
-  const initiatePayment = async (creditPackage: number) => {
+  const initiatePayment = async (creditPackage: number, promoCode?: string) => {
     isLoading.value = true;
 
     try {
       const result = await $fetch("/api/payments/create", {
         method: "POST",
-        body: { creditPackage },
+        body: { creditPackage, promoCode },
       });
 
       const { paymentUrl, transactionId } = result as {

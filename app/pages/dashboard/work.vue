@@ -113,12 +113,10 @@ const handleDownload = async (order: Order) => {
         </template>
         <template #body>
           <UFormField label="Điểm AI (0-100)">
-            <USlider v-model="aiScore" :min="0" :max="100" />
-            <div class="text-center mt-2">{{ aiScore }}%</div>
+            <UInput type="number" v-model="aiScore" :min="0" :max="100" trailing-icon="i-lucide-percent" />
           </UFormField>
           <UFormField label="Điểm đạo văn (0-100)">
-            <USlider v-model="similarityScore" :min="0" :max="100" />
-            <div class="text-center mt-2">{{ similarityScore }}%</div>
+            <UInput type="number" v-model="similarityScore" :min="0" :max="100" trailing-icon="i-lucide-percent" />
           </UFormField>
           <UFormField label="Ghi chú thêm">
             <UTextarea v-model="notes" placeholder="Nhập ghi chú về báo cáo..." :rows="3" />

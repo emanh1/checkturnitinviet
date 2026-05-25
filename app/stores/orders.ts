@@ -23,10 +23,14 @@ export const useOrdersStore = defineStore("orders", () => {
   const debouncedFileName = refDebounced(computed(() => filters.value.fileName), 500);
 
   watch([debouncedFileName, () => filters.value.status, () => filters.value.checkType, () => pagination.value.pageSize], () => {
-    pagination.value.pageIndex = 0;
+    if (pagination.value.pageIndex === 0) {
+      fetchOrders();
+    } else {
+      pagination.value.pageIndex = 0;
+    }
   });
 
-  watch([debouncedFileName, () => filters.value.status, () => filters.value.checkType, () => pagination.value.pageIndex, () => pagination.value.pageSize], () => {
+  watch(() => pagination.value.pageIndex, () => {
     fetchOrders();
   });
 
@@ -200,7 +204,12 @@ export const useOrdersStore = defineStore("orders", () => {
 
         if (payload.eventType === "DELETE") {
           orders.value = orders.value.filter((o) => o.id !== orderId);
+          totalOrders.value = Math.max(0, totalOrders.value - 1);
           return;
+        }
+
+        if (payload.eventType === "INSERT") {
+          totalOrders.value += 1;
         }
 
         const updatedOrder = await fetchSingleOrder(orderId);
@@ -214,9 +223,10 @@ export const useOrdersStore = defineStore("orders", () => {
           let newStatus = '';
           
           if (payload.eventType === "UPDATE") {
-            // Because of race conditions with the `reports` subscription (which might call fetchOrders early), 
-            // we reliably check the payload itself instead of the local store.
-            if (payload.old?.status && payload.old.status !== payload.new.status) {
+            const existingOrder = orders.value.find(o => o.id === orderId);
+            const previousStatus = payload.old?.status || existingOrder?.status;
+
+            if (previousStatus && previousStatus !== payload.new.status) {
               didStatusChange = true;
               newStatus = payload.new.status;
             }

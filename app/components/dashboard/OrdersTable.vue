@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, resolveComponent, computed } from "vue";
+import { h, resolveComponent, computed, onMounted, useTemplateRef } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import { formatBytes, formatDateTime } from "~/utils/formatters";
 import type { Order } from "~/types";
@@ -22,6 +22,10 @@ const UButton = resolveComponent("UButton");
 
 const ordersStore = useOrdersStore();
 const { filters, pagination, totalOrders } = storeToRefs(ordersStore);
+
+onMounted(() => {
+  ordersStore.fetchOrders();
+});
 
 const table = useTemplateRef("table");
 

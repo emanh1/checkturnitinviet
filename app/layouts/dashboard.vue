@@ -87,7 +87,7 @@ const items = computed<NavigationMenuItem[]>(() => [
             },
             {
               label: "Thống kê",
-              icon: "i-lucide-shield-check",
+              icon: "i-lucide-line-chart",
               to: "/dashboard/stats",
             },
             {

@@ -7,19 +7,19 @@ import {
 } from "@internationalized/date";
 import type { Range } from "~/types";
 
-const df = new DateFormatter("en-US", {
+const df = new DateFormatter("vi-VN", {
   dateStyle: "medium",
 });
 
 const selected = defineModel<Range>({ required: true });
 
 const ranges = [
-  { label: "Last 7 days", days: 7 },
-  { label: "Last 14 days", days: 14 },
-  { label: "Last 30 days", days: 30 },
-  { label: "Last 3 months", months: 3 },
-  { label: "Last 6 months", months: 6 },
-  { label: "Last year", years: 1 },
+  { label: "7 ngày qua", days: 7 },
+  { label: "14 ngày qua", days: 14 },
+  { label: "30 ngày qua", days: 30 },
+  { label: "3 tháng qua", months: 3 },
+  { label: "6 tháng qua", months: 6 },
+  { label: "Năm trước", years: 1 },
 ];
 
 const toCalendarDate = (date: Date) => {
@@ -114,7 +114,7 @@ const selectRange = (range: {
             {{ df.format(selected.start) }}
           </template>
         </template>
-        <template v-else> Pick a date </template>
+        <template v-else> Chọn ngày </template>
       </span>
 
       <template #trailing>

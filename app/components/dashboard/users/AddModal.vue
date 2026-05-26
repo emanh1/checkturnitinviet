@@ -4,8 +4,8 @@ import type { FormSubmitEvent } from "@nuxt/ui";
 
 const schema = z.object({
   // name: z.string().min(2, 'Too short'),
-  email: z.email("Invalid email"),
-  password: z.string().min(6, "Minimum 6 characters"),
+  email: z.email("Email không hợp lệ"),
+  password: z.string().min(6, "Tối thiểu 6 ký tự"),
   role: z.enum(["admin", "customer", "employee"]),
 });
 
@@ -34,7 +34,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     });
   } catch (err: any) {
     toast.add({
-      title: "Failed",
+      title: "Thất bại",
       description: `${err}`,
       color: "error",
     });
@@ -42,8 +42,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 
   toast.add({
-    title: "Success",
-    description: `New user ${event.data.email} added`,
+    title: "Thành công",
+    description: `Đã thêm người dùng ${event.data.email}`,
     color: "success",
   });
   open.value = false;
@@ -76,29 +76,29 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         >
           <UInput v-model="state.email" class="w-full" />
         </UFormField>
-        <UFormField label="Password" name="password">
+        <UFormField label="Mật khẩu" name="password">
           <UInput v-model="state.password" class="w-full" />
         </UFormField>
-        <UFormField label="Role" name="role">
+        <UFormField label="Vai trò" name="role">
           <USelect
             v-model="state.role"
             :items="[
-              { label: 'Admin', value: 'admin' },
-              { label: 'Customer', value: 'customer' },
-              { label: 'Employee', value: 'employee' },
+              { label: 'Quản trị viên', value: 'admin' },
+              { label: 'Khách hàng', value: 'customer' },
+              { label: 'Nhân viên', value: 'employee' },
             ]"
             class="w-full"
           />
         </UFormField>
         <div class="flex justify-end gap-2">
           <UButton
-            label="Cancel"
+            label="Hủy"
             color="neutral"
             variant="subtle"
             @click="open = false"
           />
           <UButton
-            label="Create"
+            label="Tạo"
             color="primary"
             variant="solid"
             type="submit"

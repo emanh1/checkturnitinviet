@@ -33,12 +33,10 @@ watch(periods, () => {
 <template>
   <USelect
     v-model="model"
-    :items="periods"
+    :items="periods.map(p => ({ value: p, label: { daily: 'Hàng ngày', weekly: 'Hàng tuần', monthly: 'Hàng tháng' }[p] }))"
     variant="ghost"
     class="data-[state=open]:bg-elevated"
     :ui="{
-      value: 'capitalize',
-      itemLabel: 'capitalize',
       trailingIcon:
         'group-data-[state=open]:rotate-180 transition-transform duration-200',
     }"

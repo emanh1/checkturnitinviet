@@ -22,7 +22,7 @@ const sales = computed<Sale[]>(() =>
     (p: { paid_at: any; profiles: { name: any }; amount: any }) => ({
       date: p.paid_at,
 
-      name: p.profiles?.name ?? "Unknown",
+      name: p.profiles?.name ?? "Không rõ",
 
       amount: p.amount,
     }),
@@ -32,9 +32,9 @@ const sales = computed<Sale[]>(() =>
 const columns: TableColumn<Sale>[] = [
   {
     accessorKey: "date",
-    header: "Date",
+    header: "Thời gian",
     cell: ({ row }) => {
-      return new Date(row.getValue("date")).toLocaleString("en-US", {
+      return new Date(row.getValue("date")).toLocaleString("vi-VN", {
         day: "numeric",
         month: "short",
         hour: "2-digit",
@@ -45,11 +45,11 @@ const columns: TableColumn<Sale>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: "Tên khách",
   },
   {
     accessorKey: "amount",
-    header: () => h("div", { class: "text-right" }, "Amount"),
+    header: () => h("div", { class: "text-right" }, "Số tiền"),
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue("amount"));
 

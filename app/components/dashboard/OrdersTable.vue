@@ -76,8 +76,8 @@ const columns = computed<TableColumn<Order>[]>(() => {
   if (props.userRole !== "customer") {
     cols.push({
       id: "customer",
-      accessorFn: (row: any) => row.customer?.name ?? "Unknown",
-      header: "Customer",
+      accessorFn: (row: any) => row.customer?.name ?? "Không rõ",
+      header: "Khách hàng",
     });
   }
 
@@ -94,14 +94,14 @@ const columns = computed<TableColumn<Order>[]>(() => {
     },
     {
       id: "notes",
-      header: "Notes",
+      header: "Ghi chú",
       cell: ({ row }) =>
         (row.original.reports?.details as any)?.notes ?? "-"
     },
     {
       id: "date",
       accessorFn: (row) => row.created_at || row.documents.uploaded_at,
-      header: "Time added",
+      header: "Thời gian tạo",
       cell: ({ row }) =>
         formatDateTime(
           row.original.created_at || row.original.documents.uploaded_at,
@@ -110,7 +110,7 @@ const columns = computed<TableColumn<Order>[]>(() => {
     {
       id: "date-updated",
       accessorFn: (row) => row.updated_at || row.documents.uploaded_at,
-      header: "Time updated",
+      header: "Thời gian cập nhật",
       cell: ({ row }) =>
         formatDateTime(
           row.original.updated_at || row.original.documents.uploaded_at,
@@ -136,9 +136,8 @@ const columns = computed<TableColumn<Order>[]>(() => {
           {
             color,
             variant: "subtle",
-            class: "capitalize",
           },
-          () => status,
+          () => ({ completed: "Hoàn tất", processing: "Đang xử lý", pending: "Chờ xử lý", failed: "Lỗi" }[status]),
         );
       },
     },
@@ -281,7 +280,7 @@ const columns = computed<TableColumn<Order>[]>(() => {
               ?.getAllColumns()
               .filter((column: any) => column.getCanHide())
               .map((column: any) => ({
-                label: column.id.charAt(0).toUpperCase() + column.id.slice(1),
+                label: typeof column.columnDef.header === 'string' ? column.columnDef.header : (column.id.charAt(0).toUpperCase() + column.id.slice(1)),
                 type: 'checkbox' as const,
                 checked: column.getIsVisible(),
                 onUpdateChecked(checked: boolean) {

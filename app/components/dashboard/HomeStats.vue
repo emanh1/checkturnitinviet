@@ -24,25 +24,25 @@ const { data } = useFetch("/api/stats", {
 
 const stats = computed<Stat[]>(() => [
   {
-    title: "Customers",
+    title: "Khách hàng",
     icon: "i-lucide-users",
     value: data.value?.customers.value ?? 0,
     variation: data.value?.customers.variation ?? 0,
   },
   {
-    title: "Revenue",
+    title: "Doanh thu",
     icon: "i-lucide-circle-dollar-sign",
     value: formatCurrency(data.value?.revenue.value ?? 0),
     variation: data.value?.revenue.variation ?? 0,
   },
   {
-    title: "Orders",
+    title: "Đơn hàng",
     icon: "i-lucide-shopping-cart",
     value: data.value?.orders.value ?? 0,
     variation: data.value?.orders.variation ?? 0,
   },
   {
-    title: "Orders processed",
+    title: "Đơn đã xử lý",
     icon: "i-lucide-package-search",
     value: data.value?.processed.value ?? 0,
     variation: data.value?.processed.variation ?? 0,

@@ -1,4 +1,4 @@
-import { serverSupabaseClient, serverSupabaseUser } from "#supabase/server";
+import { serverSupabaseServiceRole, serverSupabaseUser } from "#supabase/server";
 import { z } from "zod";
 
 export default eventHandler(async (event) => {
@@ -13,9 +13,9 @@ export default eventHandler(async (event) => {
     z.object({ code: z.string().toUpperCase() }).parse,
   );
 
-  const supabase = await serverSupabaseClient(event);
+  const supabaseAdmin = serverSupabaseServiceRole(event);
 
-  const { data: promo, error } = await supabase
+  const { data: promo, error } = await supabaseAdmin
     .from("promo_codes")
     .select("*")
     .eq("code", code)

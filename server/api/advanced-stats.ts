@@ -1,5 +1,5 @@
 import {
-  serverSupabaseClient,
+  serverSupabaseServiceRole,
   serverSupabaseUser,
 } from "#supabase/server";
 import { z } from "zod";
@@ -12,7 +12,7 @@ export default eventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
   }
 
-  const supabase = await serverSupabaseClient(event);
+  const supabaseAdmin = serverSupabaseServiceRole(event);
 
   if (user?.app_metadata?.role !== "admin") {
     throw createError({ statusCode: 403, statusMessage: "Forbidden: Admin access required" });
@@ -32,26 +32,33 @@ export default eventHandler(async (event) => {
 
   // Fetch all required data in parallel
   const [
-    { data: payments },
-    { data: orders },
-    { data: signups }
+    { data: payments, error: paymentsError },
+    { data: orders, error: ordersError },
+    { data: signups, error: signupsError }
   ] = await Promise.all([
-    supabase
+    supabaseAdmin
       .from("payments")
       .select("amount, user_id, status, profiles(name)")
       .gte("created_at", start.toISOString())
       .lte("created_at", end.toISOString()),
-    supabase
+    supabaseAdmin
       .from("orders")
       .select("check_type, status, created_at, updated_at, assigned_to, profiles!orders_assigned_to_fkey(name)")
       .gte("created_at", start.toISOString())
       .lte("created_at", end.toISOString()),
-    supabase
+    supabaseAdmin
       .from("profiles")
       .select("created_at")
       .gte("created_at", start.toISOString())
       .lte("created_at", end.toISOString())
   ]);
+
+  if (paymentsError || ordersError || signupsError) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to fetch advanced statistics from the database.",
+    });
+  }
 
   const validPayments = (payments || []).filter(p => p.status === 'success' || !p.status || p.status === 'paid');
 

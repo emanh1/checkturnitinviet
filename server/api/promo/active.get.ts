@@ -1,9 +1,9 @@
-import { serverSupabaseClient } from "#supabase/server";
+import { serverSupabaseServiceRole } from "#supabase/server";
 
 export default eventHandler(async (event) => {
-  const supabase = await serverSupabaseClient(event);
+  const supabaseAdmin = serverSupabaseServiceRole(event);
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("promo_codes")
     .select("code, banner_message")
     .eq("active", true)

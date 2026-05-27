@@ -6,11 +6,7 @@ const props = defineProps<{
   data: { user_id: string; name: string; totalAmount: number }[];
 }>();
 
-const formatCurrency = new Intl.NumberFormat("vi-VN", {
-  style: "currency",
-  currency: "VND",
-  maximumFractionDigits: 0,
-}).format;
+
 
 const columns: TableColumn<any>[] = [
   {
@@ -22,7 +18,7 @@ const columns: TableColumn<any>[] = [
     header: () => h("div", { class: "text-right" }, "Tổng chi tiêu"),
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue("totalAmount"));
-      return h("div", { class: "text-right font-medium text-highlighted" }, formatCurrency(amount));
+      return h("div", { class: "text-right font-medium text-highlighted" }, formatCurrencyVND(amount));
     },
   },
 ];

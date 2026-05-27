@@ -6,12 +6,7 @@ const props = defineProps<{
   data: { id: string; name: string; count: number; avgTime: number }[];
 }>();
 
-const formatTime = (minutes: number) => {
-  if (minutes < 60) return `${Math.round(minutes)} phút`;
-  const hours = Math.floor(minutes / 60);
-  const mins = Math.round(minutes % 60);
-  return `${hours} giờ ${mins} phút`;
-};
+
 
 const columns: TableColumn<any>[] = [
   {

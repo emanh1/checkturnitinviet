@@ -7,18 +7,7 @@ const props = defineProps<{
   };
 }>();
 
-const formatCurrency = new Intl.NumberFormat("vi-VN", {
-  style: "currency",
-  currency: "VND",
-  maximumFractionDigits: 0,
-}).format;
 
-const formatTime = (minutes: number) => {
-  if (minutes < 60) return `${Math.round(minutes)} phút`;
-  const hours = Math.floor(minutes / 60);
-  const mins = Math.round(minutes % 60);
-  return `${hours} giờ ${mins} phút`;
-};
 </script>
 
 <template>
@@ -37,7 +26,7 @@ const formatTime = (minutes: number) => {
     >
       <div class="flex items-center gap-2">
         <span class="text-2xl font-semibold text-highlighted">
-          {{ formatCurrency(data.arpu) }}
+          {{ formatCurrencyVND(data.arpu) }}
         </span>
       </div>
     </UPageCard>
@@ -56,7 +45,7 @@ const formatTime = (minutes: number) => {
     >
       <div class="flex items-center gap-2">
         <span class="text-2xl font-semibold text-highlighted">
-          {{ formatCurrency(data.aov) }}
+          {{ formatCurrencyVND(data.aov) }}
         </span>
       </div>
     </UPageCard>

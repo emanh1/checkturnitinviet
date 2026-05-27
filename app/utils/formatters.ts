@@ -28,3 +28,17 @@ export function formatDate(date: Date): string {
 }
 export const formatCurrency = (value?: number) =>
   new Intl.NumberFormat("vi-VN").format(value ?? 0);
+
+export const formatCurrencyVND = (value?: number) =>
+  new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    maximumFractionDigits: 0,
+  }).format(value ?? 0);
+
+export const formatTime = (minutes: number) => {
+  if (minutes < 60) return `${Math.round(minutes)} phút`;
+  const hours = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  return `${hours} giờ ${mins} phút`;
+};

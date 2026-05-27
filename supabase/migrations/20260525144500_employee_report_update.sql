@@ -1,3 +1,5 @@
+DROP POLICY IF EXISTS "Employees update reports" ON reports;
+
 CREATE POLICY "Employees update reports"
 ON reports
 FOR UPDATE

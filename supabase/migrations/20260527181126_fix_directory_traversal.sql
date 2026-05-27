@@ -29,7 +29,7 @@ BEGIN
     END IF;
 
     -- Prevent directory traversal
-    IF pg_catalog.position('..' in p_file_path) > 0 THEN
+    IF position('..' in p_file_path) > 0 THEN
         RAISE EXCEPTION 'Invalid file path: directory traversal detected';
     END IF;
 

@@ -45,11 +45,7 @@ export const useSettings = () => {
     settings.value = data as SystemSettings;
   };
 
-  // Initial fetch if empty
-  if (!settings.value && import.meta.client) {
-    fetchSettings();
-  }
-
+  // Initial fetch is now handled universally in app/plugins/init.ts
   const aiCreditCost = computed(() => settings.value?.ai_credit_cost || 1);
   const similarityCreditCost = computed(() => settings.value?.similarity_credit_cost || 1);
   const comboCreditCost = computed(() => settings.value?.combo_credit_cost || 2);

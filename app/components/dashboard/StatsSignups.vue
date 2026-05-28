@@ -38,18 +38,23 @@ const template = (d: any) => `${formatDate(d.date)}: ${d.count} đăng ký`;
       <p class="font-semibold text-highlighted">Đăng ký mới</p>
     </template>
 
-    <VisXYContainer
-      :data="data"
-      :padding="{ top: 40 }"
-      class="h-96"
-      :width="width"
-    >
-      <VisLine :x="x" :y="y" color="var(--ui-primary)" />
-      <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
-      <VisAxis type="x" :x="x" :tick-format="xTicks" />
-      <VisCrosshair color="var(--ui-primary)" :template="template" />
-      <VisTooltip />
-    </VisXYContainer>
+    <ClientOnly>
+      <VisXYContainer
+        :data="data"
+        :padding="{ top: 40 }"
+        class="h-96"
+        :width="width"
+      >
+        <VisLine :x="x" :y="y" color="var(--ui-primary)" />
+        <VisArea :x="x" :y="y" color="var(--ui-primary)" :opacity="0.1" />
+        <VisAxis type="x" :x="x" :tick-format="xTicks" />
+        <VisCrosshair color="var(--ui-primary)" :template="template" />
+        <VisTooltip />
+      </VisXYContainer>
+      <template #fallback>
+        <div class="w-full h-96 animate-pulse bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
+      </template>
+    </ClientOnly>
   </UCard>
 </template>
 

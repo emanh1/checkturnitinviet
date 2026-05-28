@@ -31,10 +31,15 @@ const triggers = {
     </template>
     
     <div class="h-64 flex items-center justify-center">
-      <VisSingleContainer v-if="width > 0" :data="chartData" :width="width" :height="250">
-        <VisDonut :value="value" :color="color" :arc-width="40" />
-        <VisTooltip :triggers="triggers" />
-      </VisSingleContainer>
+      <ClientOnly>
+        <VisSingleContainer v-if="width > 0" :data="chartData" :width="width" :height="250">
+          <VisDonut :value="value" :color="color" :arc-width="40" />
+          <VisTooltip :triggers="triggers" />
+        </VisSingleContainer>
+        <template #fallback>
+          <div class="w-full h-[250px] animate-pulse bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
+        </template>
+      </ClientOnly>
     </div>
     
     <!-- Legend -->

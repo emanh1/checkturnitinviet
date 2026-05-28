@@ -19,21 +19,35 @@ const { unassignedCount } = storeToRefs(ordersStore);
 
 const unsubscribeOrders = ref<(() => void) | null>(null);
 
-watch(
-  () => profile.value ? `${profile.value.id}-${profile.value.role}` : null,
-  async (currentProfileKey) => {
-    if (unsubscribeOrders.value) {
-      unsubscribeOrders.value();
-      unsubscribeOrders.value = null;
-    }
-
-    if (currentProfileKey) {
+// Fetch orders safely during SSR and hydrate to client
+await useAsyncData(
+  "dashboard-orders",
+  async () => {
+    if (profile.value) {
       await ordersStore.fetchOrders();
-      unsubscribeOrders.value = ordersStore.subscribeToOrders() || null;
     }
+    return true;
   },
-  { immediate: true }
+  { watch: [() => profile.value ? `${profile.value.id}-${profile.value.role}` : null] }
 );
+
+// Handle realtime subscriptions only on the client
+if (import.meta.client) {
+  watch(
+    () => profile.value ? `${profile.value.id}-${profile.value.role}` : null,
+    (currentProfileKey) => {
+      if (unsubscribeOrders.value) {
+        unsubscribeOrders.value();
+        unsubscribeOrders.value = null;
+      }
+
+      if (currentProfileKey) {
+        unsubscribeOrders.value = ordersStore.subscribeToOrders() || null;
+      }
+    },
+    { immediate: true }
+  );
+}
 
 onUnmounted(() => {
   if (unsubscribeOrders.value) {

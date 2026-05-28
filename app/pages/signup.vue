@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { watchEffect } from "vue";
 import * as z from "zod";
 import type { FormSubmitEvent } from "@nuxt/ui";
 
 definePageMeta({
+  middleware: "to-dashboard",
   layout: "auth",
 });
 
@@ -15,13 +15,6 @@ useSeoMeta({
 const supabase = useSupabaseClient();
 const toast = useToast();
 const router = useRouter();
-const user = useSupabaseUser();
-
-watchEffect(() => {
-  if (user.value) {
-    router.replace("/dashboard");
-  }
-});
 
 const fields = [
   {

@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const router = useRouter();
+definePageMeta({
+  middleware: 'to-dashboard',
+})
+
 const { data: page } = await useAsyncData("index", () =>
   queryCollection("index").first(),
 );
@@ -34,14 +37,7 @@ const trust = `
 **Được tin tưởng bởi 50,000+ người dùng**
 ::
 `;
-
-const user = useSupabaseUser();
-
-watchEffect(() => {
-  if (user.value) router.replace("/dashboard");
-});
 </script>
-
 <template>
   <div v-if="page">
     <UPageHero

@@ -59,13 +59,6 @@ export const collections = {
       hero: z.object({
         links: z.array(createLinkSchema()),
       }),
-      process: createBaseSchema().extend({
-        steps: z.array(
-          createBaseSchema().extend({
-            icon: z.string().nonempty().editor({ input: "icon" }),
-          }),
-        ),
-      }),
       report_preview: createBaseSchema().extend({
         ai_score: z.number(),
         similarity_score: z.number(),
@@ -87,6 +80,7 @@ export const collections = {
           orientation: orientationEnum.optional(),
           reverse: z.boolean().optional(),
           features: z.array(createFeatureItemSchema()),
+          component: z.enum(["ai_detection", "originality_report", "overall_similarity"])
         }),
       ),
       testimonials: createBaseSchema().extend({

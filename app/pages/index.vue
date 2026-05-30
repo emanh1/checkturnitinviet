@@ -32,11 +32,11 @@ useSeoMeta({
   ogImage: "https://ui.nuxt.com/assets/templates/nuxt/saas-light.png",
 });
 
-const trust = `
-::badge
-**Được tin tưởng bởi 50,000+ người dùng**
-::
-`;
+const componentMap = {
+  "ai_detection": resolveComponent('LandingAiDetectionReport'),
+  "originality_report": resolveComponent('LandingOriginalityReport'),
+  "overall_similarity": resolveComponent('LandingOverallSimilarity')
+}
 </script>
 <template>
   <div v-if="page">
@@ -58,79 +58,22 @@ const trust = `
         <MDC :value="page.description" unwrap="p" />
       </template>
 
-      <div class="mt-8 w-full max-w-3xl mx-auto">
-        <UCard variant="subtle" class="backdrop-blur border border-default">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="flex items-start gap-3">
-              <div class="rounded-lg bg-primary/10 p-2">
-                <UIcon name="i-lucide-zap" class="w-5 h-5 text-primary" />
-              </div>
-
-              <div>
-                <p class="font-semibold">Xử lý nhanh</p>
-                <p class="text-sm text-muted">Kết quả trong khoảng 2–5 phút</p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3">
-              <div class="rounded-lg bg-primary/10 p-2">
-                <UIcon
-                  name="i-lucide-badge-dollar-sign"
-                  class="w-5 h-5 text-primary"
-                />
-              </div>
-
-              <div>
-                <p class="font-semibold">Giá cạnh tranh</p>
-                <p class="text-sm text-muted">
-                  Chỉ trả tiền theo số credit sử dụng
-                </p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-3">
-              <div class="rounded-lg bg-primary/10 p-2">
-                <UIcon
-                  name="i-lucide-shield-check"
-                  class="w-5 h-5 text-primary"
-                />
-              </div>
-
-              <div>
-                <p class="font-semibold">Riêng tư & bảo mật</p>
-                <p class="text-sm text-muted">
-                  File của bạn được xử lý an toàn
-                </p>
-              </div>
-            </div>
-          </div>
-        </UCard>
-      </div>
+      <LandingAiDetectionReport />
     </UPageHero>
 
     <UPageSection
-      :title="page.process.title"
-      :description="page.process.description"
+      v-for="(section, index) in page.sections"
+      :key="index"
+      :title="section.title"
+      :description="section.description"
+      :orientation="section.orientation"
+      :reverse="section.reverse"
+      :features="section.features"
     >
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div
-          v-for="(step, index) in page.process.steps"
-          :key="index"
-          class="text-center"
-        >
-          <div class="flex justify-center mb-4">
-            <UIcon :name="step.icon" class="w-12 h-12 text-primary" />
-          </div>
-          <h3 class="text-xl font-semibold mb-2">{{ step.title }}</h3>
-          <p class="text-muted">{{ step.description }}</p>
-          <div class="mt-4 text-2xl font-bold text-primary">
-            {{ index + 1 }}
-          </div>
-        </div>
-      </div>
+      <component :is="componentMap[section.component]" />
     </UPageSection>
 
-    <USeparator class="mx-auto w-48" />
+    <!-- <USeparator class="mx-auto w-48" />
     <UPageSection
       :title="page.report_preview.title"
       :description="page.report_preview.description"
@@ -141,7 +84,7 @@ const trust = `
         :file-data="reportFileData"
         :footer-text="page.report_preview.footnote"
       />
-    </UPageSection>
+    </UPageSection> -->
 
     <USeparator class="mx-auto w-48" />
     <UPageSection
@@ -163,17 +106,6 @@ const trust = `
       </UPageGrid>
     </UPageSection>
 
-    <!-- <UPageSection
-      v-for="(section, index) in page.sections"
-      :key="index"
-      :title="section.title"
-      :description="section.description"
-      :orientation="section.orientation"
-      :reverse="section.reverse"
-      :features="section.features"
-    >
-      <ImagePlaceholder />
-    </UPageSection> -->
 
     <USeparator class="mx-auto w-48" />
     <UPageSection

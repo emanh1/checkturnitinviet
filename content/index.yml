@@ -16,19 +16,36 @@ hero:
       color: neutral
       variant: subtle
       to: /login
-process:
-  title: Quy trình check
-  description: Chỉ với vài bước đơn giản để nhận báo cáo chi tiết
-  steps:
-    - title: Chọn loại check và tải file
-      description: Chọn check AI, đạo văn hoặc combo, sau đó up file tài liệu của bạn lên.
-      icon: i-lucide-upload
-    - title: Xử lý
-      description: Chúng tôi sẽ phân tích file một cách nhanh chóng và chính xác.
-      icon: i-lucide-cog
-    - title: Báo cáo sẵn sàng
-      description: Nhận báo cáo chi tiết về mức độ AI và đạo văn trong file của bạn.
-      icon: i-lucide-check-circle
+sections:
+  - title: Quy trình check
+    description: Đăng ký miễn phí và mua credit để bắt đầu kiểm tra
+    id: features
+    orientation: horizontal
+    features:
+      - title: 1. Chọn loại check và tải file
+        description: Chọn check đạo văn hoặc check combo (AI + đạo văn), sau đó up file tài liệu của bạn lên.
+        icon: i-lucide-upload
+      - title: 2. Bước xử lý
+        description: Chúng tôi sẽ phân tích file một cách nhanh chóng và chính xác.
+        icon: i-lucide-cog
+      - title: 3. Báo cáo sẵn sàng
+        description: Nhận báo cáo chi tiết về mức độ AI và đạo văn trong file của bạn.
+        icon: i-lucide-check-circle
+    component: originality_report
+  - title: Nhận báo cáo rõ ràng, chi tiết
+    orientation: horizontal
+    reverse: true
+    features:
+      - title: Xử lý nhanh
+        description: Kết quả trong vòng 1-5 phút
+        icon: i-lucide-zap
+      - title: Giá cạnh tranh
+        description: Chỉ trả tiền theo số credit sử dụng
+        icon: i-lucide-badge-dollar-sign
+      - title: Riêng tư & Bảo mật
+        description: File của bạn được xử lý an toàn
+        icon: i-lucide-shield-check
+    component: overall_similarity
 report_preview:
   title: Demo báo cáo
   description: Báo cáo mẫu cho thấy kết quả kiểm tra AI và đạo văn

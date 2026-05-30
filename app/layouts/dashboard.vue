@@ -75,6 +75,7 @@ const items = computed<NavigationMenuItem[]>(() => [[
   {
     label: "Hạ đạo văn, hạ AI",
     icon: "i-lucide-file-badge",
+    class: "!text-amber-600 dark:!text-amber-400 font-medium",
     onSelect: () => {
       contactModal.open()
     }
@@ -130,7 +131,8 @@ const items = computed<NavigationMenuItem[]>(() => [[
     label: "Liên hệ hỗ trợ",
     icon: "i-simple-icons-zalo",
     to: "https://zalo.me/0986408788",
-    target: "_blank"
+    target: "_blank",
+    class: "!text-blue-500 dark:!text-blue-400 font-medium"
   }
 ]]);
 </script>
